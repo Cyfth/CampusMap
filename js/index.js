@@ -14,6 +14,7 @@
  *You should have received a copy of the GNU Affero General Public License
  *along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+var Leaflet = require('Leaflet');
 var app = {
     // Application Constructor
     initialize: function() {
@@ -48,9 +49,9 @@ var app = {
 
 app.initialize();
 
-var map = L.map('map');
+var map = Leaflet.map('map');
 
-L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+Leaflet.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
