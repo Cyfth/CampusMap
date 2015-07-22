@@ -36,9 +36,11 @@ function getLocationsName() {
 
 function getGeometry(locationName) {
   var index;
-  for(index = 0; index < locationsName; index++) {
-    if(locationsName[index] == locationName) {
-      return rawLocations[index].geometry;
+  for(index = 0; index < rawLocations.length; index++) {
+    if(rawLocations[index].properties.tags.name) {
+      if(rawLocations[index].properties.tags.name.toLowerCase() == locationName.toLowerCase()) {
+        return rawLocations[index].geometry;
+      }
     }
   }
 }
@@ -49,9 +51,7 @@ function getPosition(locationName) {
   , axis_y = 0
   , coordinate
   , index;
-
   if(locationGeometry) {
-
     // It will only change the marker if it's of the following types
     if (locationGeometry.type == 'Polygon') {
       // Get the exterior ring coordinate | Don't understand? Check GeoJSON Spec!

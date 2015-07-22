@@ -25,8 +25,10 @@ var map = new Leaflet.map('map', {
 var searchInput = document.getElementById('search_input');
 var searchButton = document.getElementById('search_button');
 var bounds = [[-3.0805, -59.9467], [-3.1074, -59.9873]];
-var sourceMarker;
+var sourceMarker, destinationMarker;
+var sourcePosition, destinationPosition;
 var isInsideUfam;
+var routePath;
 
 function resolvePosition(data) {
   if (data.latitude < bounds[0][0] && data.latitude > bounds[1][0] &&
@@ -44,7 +46,27 @@ function resolvePosition(data) {
 
 function setDestinationMarker() {
   var searchText = searchInput.value;
-  console.log(searchText);
+  if(searchText != "") {
+    //console.log(searchText);
+    var position = Locations.getPosition(searchText);
+
+    if(position.latitude != 0 && position.longitude != 0) {
+      //map.removeLayer(routePath);
+
+      destinationPosition = [position.latitude, position.longitude];
+      destinationMarker.setLatLng([position.latitude, position.longitude])
+        .setPopupContent(searchText)
+        .openPopup();
+
+      var route = [sourcePosition, destinationPosition];
+      console.log(route);
+      if(routePath) {
+        routePath.setLatLngs(route);
+      } else {
+        routePath = Leaflet.polyline(route, {color: 'blue'}).addTo(map);
+      }
+    }
+  }
 }
 
 function initialize() {
@@ -65,11 +87,17 @@ function initialize() {
   // This limit the user from go elsewhere beyond bounds
   map.setMaxBounds(bounds);
 
+  // Out of user range just to initialize
+  destinationMarker = Leaflet.marker([0,0])
+    .addTo(map)
+    .bindPopup('Destino')
+    .openPopup();
+
   Geolocation.getGeolocation(function (data) {
     if(typeof data == "object") {
-      var sourcePosition = resolvePosition(data);
+      sourcePosition = resolvePosition(data);
       var sourcePopup = isInsideUfam ? 'Você está aqui!' : 'Entrada da UFAM';
-      var sourceMarker = Leaflet.marker(sourcePosition)
+      sourceMarker = Leaflet.marker(sourcePosition)
         .addTo(map)
         .bindPopup(sourcePopup)
         .openPopup();
