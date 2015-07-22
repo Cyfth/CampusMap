@@ -24,15 +24,20 @@ function initialize() {
   locationsName = Locations.getLocationsName();
 
   locationsAutoComplete = new Autocomplete({
-     selector: searchInput,
-     minChars: 2,
-     source: function(term, suggest){
-         term = term.toLowerCase();
-         var matches = [];
-         for (i=0; i<locationsName.length; i++)
-             if (~locationsName[i].toLowerCase().indexOf(term)) matches.push(locationsName[i]);
-         suggest(matches);
-     }
+    selector: searchInput,
+    minChars: 2,
+    source: function(term, suggest){
+       term = term.toLowerCase();
+       var matches = [];
+       for (i=0; i<locationsName.length; i++)
+           if (~locationsName[i].toLowerCase().indexOf(term)) matches.push(locationsName[i]);
+       suggest(matches);
+    },
+    renderItem: function (item, search){
+      var re = new RegExp("(" + search.split(' ').join('|') + ")", "gi");
+      return '<div class="autocomplete-suggestion autocomplete-suggestion-option"'
+      + 'data-val="' + item + '">' + item.replace(re, "<b>$1</b>") + '</div>';
+    },
  });
 }
 
