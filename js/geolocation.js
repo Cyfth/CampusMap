@@ -17,18 +17,18 @@
 
 // Retrieve user geolocation by browser(for tests) and cordova
 
-var position, error, callback, is_position_updated, is_error_raised;
+var position, error, callback, isPositionUpdated, isErrorRaised;
 
 function getNewPosition(data) {
   position = {
     latitude: data.coords.latitude,
     longitude: data.coords.longitude
   };
-  is_position_updated = true;
+  isPositionUpdated = true;
 }
 
 function getError(error) {
-  is_error_raised = true;
+  isErrorRaised = true;
   switch (error.code) {
     case error.PERMISSION_DENIED:
       console.error("User denied the request for Geolocation.");
@@ -57,18 +57,18 @@ function getGeolocation(callback) {
       maximumAge: 0
     });
   }
-  is_position_updated = false;
-  is_error_raised = false;
+  isPositionUpdated = false;
+  isErrorRaised = false;
 
   /*
   It seems is set to loop infinitely but is based that getCurrentPosition will
   always return something, the position or error. Maximum time = timeout.
   */
   var interval = setInterval(function () {
-    if(is_position_updated) {
+    if(isPositionUpdated) {
       callback(position);
       clearInterval(interval);
-    } else if(is_error_raised) {
+    } else if(isErrorRaised) {
       callback(error);
       clearInterval(interval);
     }

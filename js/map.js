@@ -21,11 +21,26 @@ var map = new Leaflet.map('map', {
   zoomControl: false
 });
 
+var bounds = [[-3.0805, -59.9467], [-3.1074, -59.9873]];
 var sourceMarker;
+var isInsideUfam;
+
+function resolvePosition(data) {
+  if (data.latitude < bounds[0][0] && data.latitude > bounds[1][0] &&
+    data.longitude < bounds[0][1] && data.longitude > bounds[1][1]) {
+    isInsideUfam = true;
+    return [data.latitude, data.longitude];
+
+  } else {
+    isInsideUfam = false;
+    return [-3.101187, -59.9825066];
+    //'Ops! A sua localização está fora dos limites da UFAM. Então colocamos
+    // como ponto de partida, a entrada da UFAM.'
+  }
+}
 
 function initialize() {
   Leaflet.Icon.Default.imagePath = './css/leaflet/images';
-  var bounds = [[-3.0805, -59.9467], [-3.1074, -59.9873]];
 
   // bounds limit the tiles to download just for the bound area.
   Leaflet.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -42,9 +57,11 @@ function initialize() {
 
   Geolocation.getGeolocation(function (data) {
     if(typeof data == "object") {
-      var sourceMarker = Leaflet.marker([data.latitude, data.longitude])
+      var sourcePosition = resolvePosition(data);
+      var sourcePopup = isInsideUfam ? 'Você está aqui!' : 'Entrada da UFAM';
+      var sourceMarker = Leaflet.marker(sourcePosition)
         .addTo(map)
-        .bindPopup('Você está aqui!')
+        .bindPopup(sourcePopup)
         .openPopup();
     } else {
       // Error
