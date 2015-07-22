@@ -16,6 +16,6 @@
  */
 var App = require('./app.js')
 var Map = require('./map.js');
-console.log(App);
+
 App.initialize();
 Map.initialize();
