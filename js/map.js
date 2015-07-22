@@ -15,15 +15,95 @@
  *along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 var Leaflet = require('Leaflet');
+var Geolocation = require('./geolocation.js');
+var Locations = require('./locations.js');
 
-var map = Leaflet.map('map');
+var map = new Leaflet.map('map', {
+  zoomControl: false
+});
+
+var searchInput = document.getElementById('search_input');
+var searchButton = document.getElementById('search_button');
+var bounds = [[-3.0805, -59.9467], [-3.1074, -59.9873]];
+var sourceMarker, destinationMarker;
+var sourcePosition, destinationPosition;
+var isInsideUfam;
+var routePath;
+
+function resolvePosition(data) {
+  if (data.latitude < bounds[0][0] && data.latitude > bounds[1][0] &&
+    data.longitude < bounds[0][1] && data.longitude > bounds[1][1]) {
+    isInsideUfam = true;
+    return [data.latitude, data.longitude];
+
+  } else {
+    isInsideUfam = false;
+    return [-3.101187, -59.9825066];
+    //'Ops! A sua localização está fora dos limites da UFAM. Então colocamos
+    // como ponto de partida, a entrada da UFAM.'
+  }
+}
+
+function setDestinationMarker() {
+  var searchText = searchInput.value;
+  if(searchText != "") {
+    //console.log(searchText);
+    var position = Locations.getPosition(searchText);
+
+    if(position.latitude != 0 && position.longitude != 0) {
+      destinationPosition = [position.latitude, position.longitude];
+      destinationMarker.setLatLng([position.latitude, position.longitude])
+        .setPopupContent(searchText)
+        .openPopup();
+
+      var route = [sourcePosition, destinationPosition];
+      console.log(route);
+      if(routePath) {
+        routePath.setLatLngs(route);
+      } else {
+        routePath = Leaflet.polyline(route, {color: 'blue'}).addTo(map);
+      }
+    }
+  }
+}
 
 function initialize() {
+  searchButton.addEventListener("click", setDestinationMarker);
+
+  Leaflet.Icon.Default.imagePath = './css/leaflet/images';
+
+  // bounds limit the tiles to download just for the bound area.
   Leaflet.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    //'bounds': bounds,
+    'attribution': '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map);
 
-  map.setView([51.505, -0.09], 13);
+  map.setView([-3.0929649, -59.9661264], 15);
+
+  var zoomControl = Leaflet.control.zoom({position: "bottomleft"});
+  map.addControl(zoomControl);
+  // This limit the user from go elsewhere beyond bounds
+  map.setMaxBounds(bounds);
+
+  // Out of user range just to initialize
+  destinationMarker = Leaflet.marker([0,0])
+    .addTo(map)
+    .bindPopup('Destino')
+    .openPopup();
+
+  Geolocation.getGeolocation(function (data) {
+    if(typeof data == "object") {
+      sourcePosition = resolvePosition(data);
+      var sourcePopup = isInsideUfam ? 'Você está aqui!' : 'Entrada da UFAM';
+      sourceMarker = Leaflet.marker(sourcePosition)
+        .addTo(map)
+        .bindPopup(sourcePopup)
+        .openPopup();
+    } else {
+      // Error
+      console.log(data);
+    }
+  });
 }
 
 module.exports = {
