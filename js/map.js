@@ -36,6 +36,10 @@ function initialize() {
   map.addControl(zoomControl);
   // This limit the user from go elsewhere beyond bounds
   map.setMaxBounds(bounds);
+
+  Geolocation.getGeolocation(function (data) {
+    console.log(data);
+  });
 }
 
 module.exports = {

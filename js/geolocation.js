@@ -17,5 +17,61 @@
 
 // Retrieve user geolocation by browser(for tests) and cordova
 
+var position, error, callback, is_position_updated, is_error_raised;
+
+function getNewPosition(data) {
+  position = [data.coords.latitude, data.coords.longitude];
+  is_position_updated = true;
+}
+
+function getError(error) {
+  is_error_raised = true;
+  switch (error.code) {
+    case error.PERMISSION_DENIED:
+      console.error("User denied the request for Geolocation.");
+      error = 'Usuário negou pedido';
+      break;
+    case error.POSITION_UNAVAILABLE:
+      console.error("Location information is unavailable.");
+      error = 'Não foi possível encontrar a sua localização. Posição indisponível. Entrada da UFAM foi colocado como ponto de partida.';
+      break;
+    case error.TIMEOUT:
+      console.error("The request to get user location timed out.");
+      error = 'Não foi possível encontrar a sua localização. Tempo de espera esgotado. Entrada da UFAM foi colocado como ponto de partida.';
+      break;
+    case error.UNKNOWN_ERROR:
+      console.error("An unknown error occurred.");
+      error = 'Não foi possível encontrar a sua localização. Erro desconhecido. Entrada da UFAM foi colocado como ponto de partida.';
+      break;
+  }
+}
+
+function getGeolocation(callback) {
+  if(navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(getNewPosition, getError, {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0
+    });
+  }
+  is_position_updated = false;
+  is_error_raised = false;
+
+  /*
+  It seems is set to loop infinitely but is based that getCurrentPosition will
+  always return something, the position or error. Maximum time = timeout.
+  */
+  var interval = setInterval(function () {
+    if(is_position_updated) {
+      callback(position);
+      clearInterval(interval);
+    } else if(is_error_raised) {
+      callback(error);
+      clearInterval(interval);
+    }
+  }, 1000);
+}
+
 module.exports = {
+  "getGeolocation": getGeolocation
 }
