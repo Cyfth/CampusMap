@@ -20,7 +20,10 @@
 var position, error, callback, is_position_updated, is_error_raised;
 
 function getNewPosition(data) {
-  position = [data.coords.latitude, data.coords.longitude];
+  position = {
+    latitude: data.coords.latitude,
+    longitude: data.coords.longitude
+  };
   is_position_updated = true;
 }
 

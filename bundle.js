@@ -69,7 +69,10 @@ module.exports = {
 var position, error, callback, is_position_updated, is_error_raised;
 
 function getNewPosition(data) {
-  position = [data.coords.latitude, data.coords.longitude];
+  position = {
+    latitude: data.coords.latitude,
+    longitude: data.coords.longitude
+  };
   is_position_updated = true;
 }
 
@@ -170,7 +173,10 @@ var map = new Leaflet.map('map', {
   zoomControl: false
 });
 
+var sourceMarker;
+
 function initialize() {
+  Leaflet.Icon.Default.imagePath = './css/leaflet/images';
   var bounds = [[-3.0805, -59.9467], [-3.1074, -59.9873]];
 
   // bounds limit the tiles to download just for the bound area.
@@ -187,7 +193,15 @@ function initialize() {
   map.setMaxBounds(bounds);
 
   Geolocation.getGeolocation(function (data) {
-    console.log(data);
+    if(typeof data == "object") {
+      var sourceMarker = Leaflet.marker([data.latitude, data.longitude])
+        .addTo(map)
+        .bindPopup('Você está aqui!')
+        .openPopup();
+    } else {
+      // Error
+      console.log(data);
+    }
   });
 }
 
