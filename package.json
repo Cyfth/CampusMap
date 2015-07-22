@@ -1,6 +1,6 @@
 {
   "name": "CampusMap",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "UFAM's Campus Map",
   "main": "js/index.js",
   "scripts": {

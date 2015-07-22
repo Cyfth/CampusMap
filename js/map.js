@@ -69,6 +69,9 @@ function setDestinationMarker() {
 
 function initialize() {
   searchButton.addEventListener("click", setDestinationMarker);
+  searchInput.addEventListener("click", function () {
+    searchInput.value = "";
+  });
 
   Leaflet.Icon.Default.imagePath = './css/leaflet/images';
 
