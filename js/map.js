@@ -51,8 +51,6 @@ function setDestinationMarker() {
     var position = Locations.getPosition(searchText);
 
     if(position.latitude != 0 && position.longitude != 0) {
-      //map.removeLayer(routePath);
-
       destinationPosition = [position.latitude, position.longitude];
       destinationMarker.setLatLng([position.latitude, position.longitude])
         .setPopupContent(searchText)
