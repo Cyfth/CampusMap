@@ -31,7 +31,8 @@ module.exports = {
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
-        app.receivedEvent('deviceready');
+        receivedEvent('deviceready');
+        console.log("Cordova: Device is ready!");
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
