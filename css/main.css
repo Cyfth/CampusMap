@@ -5,3 +5,12 @@ body {
 html, body, #map {
     height: 100%;
 }
+
+#search_bar {
+  width:100%;
+  position: absolute;
+}
+
+#search_box {
+  margin: 1% 5% 0 5%;
+}
