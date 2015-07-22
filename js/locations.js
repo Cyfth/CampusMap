@@ -14,29 +14,26 @@
  *You should have received a copy of the GNU Affero General Public License
  *along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var Autocomplete = require('./libraries/auto-complete.min.js');
-var Locations = require('./locations.js');
-var searchInput = document.getElementById('search_input');
+var rawLocations = require('../data/ufam.json');
+var locationsName = [];
 
-var locationsAutoComplete, locationsName;
-
-function initialize() {
-  locationsName = Locations.getLocationsName();
-
-  locationsAutoComplete = new Autocomplete({
-     selector: searchInput,
-     minChars: 2,
-     source: function(term, suggest){
-         term = term.toLowerCase();
-         var matches = [];
-         for (i=0; i<locationsName.length; i++)
-             if (~locationsName[i].toLowerCase().indexOf(term)) matches.push(locationsName[i]);
-         suggest(matches);
-     }
- });
+function filterRawLocations() {
+  var index;
+  for(index = 0; index < rawLocations.length; index++) {
+    if(rawLocations[index].properties.tags.name) {
+      locationsName.push(rawLocations[index].properties.tags.name);
+    }
+  }
 }
 
+(function initialize() {
+  filterRawLocations();
+})();
+
+function getLocationsName() {
+  return locationsName;
+}
 
 module.exports = {
-  'initialize': initialize
+  'getLocationsName': getLocationsName
 }
