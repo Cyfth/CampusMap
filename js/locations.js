@@ -34,6 +34,68 @@ function getLocationsName() {
   return locationsName;
 }
 
+function getGeometry(locationName) {
+  var index;
+  for(index = 0; index < locationsName; index++) {
+    if(locationsName[index] == locationName) {
+      return rawLocations[index].geometry;
+    }
+  }
+}
+
+function getPosition(locationName) {
+  var locationGeometry = getGeometry(locationName);
+  var axis_x = 0
+  , axis_y = 0
+  , coordinate
+  , index;
+
+  if(locationGeometry) {
+
+    // It will only change the marker if it's of the following types
+    if (locationGeometry.type == 'Polygon') {
+      // Get the exterior ring coordinate | Don't understand? Check GeoJSON Spec!
+      for (index = locationGeometry.coordinates[0].length - 1; index >= 0; index--) {
+
+        coordinate = locationGeometry.coordinates[0];
+
+        axis_x += coordinate[index][0];
+        axis_y += coordinate[index][1];
+      }
+
+      axis_x = axis_x / locationGeometry.coordinates[0].length;
+      axis_y = axis_y / locationGeometry.coordinates[0].length;
+
+    } else if (locationGeometry.type == 'MultiPolygon') {
+      // Get the exterior ring coordinate of the first polygon | For more check GeoJSON Spec
+      for (index = locationGeometry.coordinates[0][0].length - 1
+      ; index >= 0; index--) {
+
+        coordinate = locationGeometry.coordinates[0][0];
+
+        axis_x += coordinate[index][0];
+        axis_y += coordinate[index][1];
+
+      }
+
+      axis_x = axis_x / locationGeometry.coordinates[0][0].length;
+      axis_y = axis_y / locationGeometry.coordinates[0][0].length;
+
+    } else if (locationGeometry.type == 'Point') {
+
+      axis_x = locationGeometry.coordinates[0];
+      axis_y = locationGeometry.coordinates[1];
+
+    }
+  }
+
+  return {
+    latitude: axis_y,
+    longitude: axis_x
+  };
+}
+
 module.exports = {
+  'getPosition': getPosition,
   'getLocationsName': getLocationsName
 }

@@ -16,11 +16,14 @@
  */
 var Leaflet = require('Leaflet');
 var Geolocation = require('./geolocation.js');
+var Locations = require('./locations.js');
 
 var map = new Leaflet.map('map', {
   zoomControl: false
 });
 
+var searchInput = document.getElementById('search_input');
+var searchButton = document.getElementById('search_button');
 var bounds = [[-3.0805, -59.9467], [-3.1074, -59.9873]];
 var sourceMarker;
 var isInsideUfam;
@@ -39,7 +42,14 @@ function resolvePosition(data) {
   }
 }
 
+function setDestinationMarker() {
+  var searchText = searchInput.value;
+  console.log(searchText);
+}
+
 function initialize() {
+  searchButton.addEventListener("click", setDestinationMarker);
+
   Leaflet.Icon.Default.imagePath = './css/leaflet/images';
 
   // bounds limit the tiles to download just for the bound area.

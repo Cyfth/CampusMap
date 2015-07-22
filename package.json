@@ -4,7 +4,7 @@
   "description": "UFAM's Campus Map",
   "main": "js/index.js",
   "scripts": {
-    "build": "browserify js/index.js > bundle.js && echo \"Build Completed\"",
+    "build": "browserify js/index.js --debug > bundle.js | echo | echo \"Build Completed\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
