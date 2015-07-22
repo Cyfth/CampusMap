@@ -25,7 +25,7 @@ function initialize() {
 
   // bounds limit the tiles to download just for the bound area.
   Leaflet.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    'bounds': bounds,
+    //'bounds': bounds,
     'attribution': '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map);
 
