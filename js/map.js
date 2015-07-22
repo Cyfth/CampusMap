@@ -14,8 +14,18 @@
  *You should have received a copy of the GNU Affero General Public License
  *along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var App = require('./app.js')
-var Map = require('./map.js');
-console.log(App);
-App.initialize();
-Map.initialize();
+var Leaflet = require('Leaflet');
+
+var map = Leaflet.map('map');
+
+function initialize() {
+  Leaflet.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+
+  map.setView([51.505, -0.09], 13);
+}
+
+module.exports = {
+  "initialize": initialize
+}
