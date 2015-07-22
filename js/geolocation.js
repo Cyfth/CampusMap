@@ -14,9 +14,6 @@
  *You should have received a copy of the GNU Affero General Public License
  *along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-// Retrieve user geolocation by browser(for tests) and cordova
-
 var position, error, callback, isPositionUpdated, isErrorRaised;
 
 function getNewPosition(data) {

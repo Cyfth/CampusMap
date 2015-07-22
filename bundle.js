@@ -64,9 +64,48 @@ module.exports = {
  *You should have received a copy of the GNU Affero General Public License
  *along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+var Autocomplete = require('./libraries/auto-complete.min.js');
 
-// Retrieve user geolocation by browser(for tests) and cordova
+var searchInput = document.getElementById('search_input');
 
+var locationsAutoComplete;
+
+function initialize() {
+  locationsAutoComplete = new Autocomplete({
+     selector: searchInput,
+     minChars: 2,
+     source: function(term, suggest){
+         term = term.toLowerCase();
+         var choices = ['ActionScript', 'AppleScript', 'Asp'];
+         var matches = [];
+         for (i=0; i<choices.length; i++)
+             if (~choices[i].toLowerCase().indexOf(term)) matches.push(choices[i]);
+         suggest(matches);
+     }
+ });
+}
+
+
+module.exports = {
+  'initialize': initialize
+}
+},{"./libraries/auto-complete.min.js":5}],3:[function(require,module,exports){
+/*!
+ *< CampusMap - UFAM's Campus Map App with own route system >
+ *Copyright (C) <2015>  <Cyfth - jackson@cyfth.com - cyfth.com>>
+ *
+ *This program is free software: you can redistribute it and/or modify
+ *it under the terms of the GNU Affero General Public License as published
+ *by the Free Software Foundation, either version 3 of the License, or
+ *(at your option) any later version.
+ *This program is distributed in the hope that it will be useful,
+ *but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *GNU Affero General Public License for more details.
+ *
+ *You should have received a copy of the GNU Affero General Public License
+ *along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 var position, error, callback, isPositionUpdated, isErrorRaised;
 
 function getNewPosition(data) {
@@ -128,7 +167,7 @@ function getGeolocation(callback) {
 module.exports = {
   "getGeolocation": getGeolocation
 }
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 /*!
  *< CampusMap - UFAM's Campus Map App with own route system >
  *Copyright (C) <2015>  <Cyfth - jackson@cyfth.com - cyfth.com>>
@@ -145,12 +184,18 @@ module.exports = {
  *You should have received a copy of the GNU Affero General Public License
  *along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var App = require('./app.js')
+var App = require('./app.js');
 var Map = require('./map.js');
+var Autocomplete = require('./autocomplete.js');
 
 App.initialize();
 Map.initialize();
-},{"./app.js":1,"./map.js":4}],4:[function(require,module,exports){
+Autocomplete.initialize();
+},{"./app.js":1,"./autocomplete.js":2,"./map.js":6}],5:[function(require,module,exports){
+// JavaScript autoComplete v1.0.1
+// https://github.com/Pixabay/JavaScript-autoComplete
+var autoComplete=function(){function e(e){function t(e,t){return e.classList?e.classList.contains(t):new RegExp("\\b"+t+"\\b").test(e.className)}function s(e,t,s){e.attachEvent?e.attachEvent("on"+t,s):e.addEventListener(t,s)}function o(e,t,s){e.detachEvent?e.detachEvent("on"+t,s):e.removeEventListener(t,s)}function l(e,o,l,c){s(c||document,o,function(s){for(var o,c=s.target||s.srcElement;c&&!(o=t(c,e));)c=c.parentElement;o&&l.call(c,s)})}if(document.querySelector){var c={selector:0,source:0,minChars:3,delay:150,cache:1,menuClass:"",renderItem:function(e,t){var s=new RegExp("("+t.split(" ").join("|")+")","gi");return'<div class="autocomplete-suggestion" data-val="'+e+'">'+e.replace(s,"<b>$1</b>")+"</div>"},onSelect:function(e,t,s){}};for(var n in e)e.hasOwnProperty(n)&&(c[n]=e[n]);for(var a="object"==typeof c.selector?[c.selector]:document.querySelectorAll(c.selector),u=0;u<a.length;u++){var i=a[u];i.sc=document.createElement("div"),i.sc.className="autocomplete-suggestions "+c.menuClass,i.setAttribute("data-sc",i.sc),i.autocompleteAttr=i.getAttribute("autocomplete"),i.setAttribute("autocomplete","off"),i.cache={},i.last_val="",i.updateSC=function(e,t){var s=i.getBoundingClientRect();if(i.sc.style.left=s.left+(window.pageXOffset||document.documentElement.scrollLeft)+"px",i.sc.style.top=s.bottom+(window.pageYOffset||document.documentElement.scrollTop)+1+"px",i.sc.style.width=s.right-s.left+"px",!e&&(i.sc.style.display="block",i.sc.maxHeight||(i.sc.maxHeight=parseInt((window.getComputedStyle?getComputedStyle(i.sc,null):i.sc.currentStyle).maxHeight)),i.sc.suggestionHeight||(i.sc.suggestionHeight=i.sc.querySelector(".autocomplete-suggestion").offsetHeight),i.sc.suggestionHeight))if(t){var o=i.sc.scrollTop,l=t.getBoundingClientRect().top-i.sc.getBoundingClientRect().top;l+i.sc.suggestionHeight-i.sc.maxHeight>0?i.sc.scrollTop=l+i.sc.suggestionHeight+o-i.sc.maxHeight:0>l&&(i.sc.scrollTop=l+o)}else i.sc.scrollTop=0},s(window,"resize",i.updateSC),document.body.appendChild(i.sc),l("autocomplete-suggestion","mouseleave",function(e){var t=i.sc.querySelector(".autocomplete-suggestion.selected");t&&setTimeout(function(){t.className=t.className.replace("selected","")},20)},i.sc),l("autocomplete-suggestion","mouseover",function(e){var t=i.sc.querySelector(".autocomplete-suggestion.selected");t&&(t.className=t.className.replace("selected","")),this.className+=" selected"},i.sc),l("autocomplete-suggestion","mouseup",function(e){if(t(this,"autocomplete-suggestion")){var s=this.getAttribute("data-val");i.value=s,c.onSelect(e,s,this),i.sc.style.display="none"}},i.sc),i.blurHandler=function(){try{var e=document.querySelector(".autocomplete-suggestions:hover")}catch(t){var e=0}e?i!==document.activeElement&&i.focus():(i.last_val=i.value,i.sc.style.display="none")},s(i,"blur",i.blurHandler);var r=function(e){var t=i.value;if(i.cache[t]=e,e.length&&t.length>=c.minChars){for(var s="",o=0;o<e.length;o++)s+=c.renderItem(e[o],t);i.sc.innerHTML=s,i.updateSC(0)}else i.sc.style.display="none"};i.keydownHandler=function(e){var t=window.event?e.keyCode:e.which;if((40==t||38==t)&&i.sc.innerHTML){var s,o=i.sc.querySelector(".autocomplete-suggestion.selected");return o?(s=40==t?o.nextSibling:o.previousSibling,s?(o.className=o.className.replace("selected",""),s.className+=" selected",i.value=s.getAttribute("data-val")):(o.className=o.className.replace("selected",""),i.value=i.last_val,s=0)):(s=40==t?i.sc.querySelector(".autocomplete-suggestion"):i.sc.childNodes[i.sc.childNodes.length-1],s.className+=" selected",i.value=s.getAttribute("data-val")),i.updateSC(0,s),!1}if(27==t)i.value=i.last_val,i.sc.style.display="none";else if(13==t){var o=i.sc.querySelector(".autocomplete-suggestion.selected");o&&(c.onSelect(e,o.getAttribute("data-val"),o),setTimeout(function(){i.sc.style.display="none"},10))}},s(i,"keydown",i.keydownHandler),i.keyupHandler=function(e){var t=window.event?e.keyCode:e.which;if(38!=t&&40!=t&&37!=t&&39!=t&&13!=t&&27!=t){var s=i.value;if(s.length>=c.minChars){if(s!=i.last_val){if(i.last_val=s,clearTimeout(i.timer),c.cache){if(s in i.cache)return void r(i.cache[s]);for(var o=1;o<s.length-c.minChars;o++){var l=s.slice(0,s.length-o);if(l in i.cache&&!i.cache[l].length)return void r([])}}i.timer=setTimeout(function(){c.source(s,r)},c.delay)}}else i.last_val=s,i.sc.style.display="none"}},s(i,"keyup",i.keyupHandler),i.focusHandler=function(e){i.last_val="\n",i.keyupHandler(e)},c.minChars||s(i,"focus",i.focusHandler)}this.destroy=function(){for(var e=0;e<a.length;e++){var t=a[e];o(window,"resize",t.updateSC),o(t,"blur",t.blurHandler),o(t,"focus",t.focusHandler),o(t,"keydown",t.keydownHandler),o(t,"keyup",t.keyupHandler),t.autocompleteAttr?t.setAttribute("autocomplete",t.autocompleteAttr):t.removeAttribute("autocomplete"),document.body.removeChild(t.sc),t=null}}}}return e}();!function(){"function"==typeof define&&define.amd?define("autoComplete",function(){return autoComplete}):"undefined"!=typeof module&&module.exports?module.exports=autoComplete:window.autoComplete=autoComplete}();
+},{}],6:[function(require,module,exports){
 /*!
  *< CampusMap - UFAM's Campus Map App with own route system >
  *Copyright (C) <2015>  <Cyfth - jackson@cyfth.com - cyfth.com>>
@@ -226,7 +271,7 @@ function initialize() {
 module.exports = {
   "initialize": initialize
 }
-},{"./geolocation.js":2,"Leaflet":5}],5:[function(require,module,exports){
+},{"./geolocation.js":3,"Leaflet":7}],7:[function(require,module,exports){
 /*
  Leaflet, a JavaScript library for mobile-friendly interactive maps. http://leafletjs.com
  (c) 2010-2013, Vladimir Agafonkin
@@ -9407,4 +9452,4 @@ L.Map.include({
 
 
 }(window, document));
-},{}]},{},[3]);
+},{}]},{},[4]);

@@ -14,10 +14,28 @@
  *You should have received a copy of the GNU Affero General Public License
  *along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var App = require('./app.js');
-var Map = require('./map.js');
-var Autocomplete = require('./autocomplete.js');
+var Autocomplete = require('./libraries/auto-complete.min.js');
 
-App.initialize();
-Map.initialize();
-Autocomplete.initialize();
+var searchInput = document.getElementById('search_input');
+
+var locationsAutoComplete;
+
+function initialize() {
+  locationsAutoComplete = new Autocomplete({
+     selector: searchInput,
+     minChars: 2,
+     source: function(term, suggest){
+         term = term.toLowerCase();
+         var choices = ['ActionScript', 'AppleScript', 'Asp'];
+         var matches = [];
+         for (i=0; i<choices.length; i++)
+             if (~choices[i].toLowerCase().indexOf(term)) matches.push(choices[i]);
+         suggest(matches);
+     }
+ });
+}
+
+
+module.exports = {
+  'initialize': initialize
+}
