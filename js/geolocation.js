@@ -14,30 +14,8 @@
  *You should have received a copy of the GNU Affero General Public License
  *along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var Leaflet = require('Leaflet');
-var Geolocation = require('./geolocation.js');
 
-var map = new Leaflet.map('map', {
-  zoomControl: false
-});
-
-function initialize() {
-  var bounds = [[-3.0805, -59.9467], [-3.1074, -59.9873]];
-
-  // bounds limit the tiles to download just for the bound area.
-  Leaflet.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    //'bounds': bounds,
-    'attribution': '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-  }).addTo(map);
-
-  map.setView([-3.0929649, -59.9661264], 15);
-
-  var zoomControl = Leaflet.control.zoom({position: "bottomleft"});
-  map.addControl(zoomControl);
-  // This limit the user from go elsewhere beyond bounds
-  map.setMaxBounds(bounds);
-}
+// Retrieve user geolocation by browser(for tests) and cordova
 
 module.exports = {
-  "initialize": initialize
 }
