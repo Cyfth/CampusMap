@@ -15,9 +15,11 @@
  *along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 var Leaflet = require('Leaflet');
+var RotatedMarker = require('./RotatedMarker.js');
 var Geolocation = require('./geolocation.js');
 var Locations = require('./locations.js');
-
+var Icons = require('./icons.js');
+console.log(Icons.navigatorIcon);
 var map = new Leaflet.map('map', {
   zoomControl: false
 });
@@ -98,10 +100,13 @@ function initialize() {
     if(typeof data == "object") {
       sourcePosition = resolvePosition(data);
       var sourcePopup = isInsideUfam ? 'Você está aqui!' : 'Entrada da UFAM';
-      sourceMarker = Leaflet.marker(sourcePosition)
+      sourceMarker = RotatedMarker.create(sourcePosition, {icon: Icons.navigatorIcon})
         .addTo(map)
         .bindPopup(sourcePopup)
         .openPopup();
+
+      sourceMarker.setAngle(60);
+
     } else {
       // Error
       console.log(data);
