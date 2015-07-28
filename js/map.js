@@ -19,7 +19,6 @@ var RotatedMarker = require('./RotatedMarker.js');
 var Geolocation = require('./geolocation.js');
 var Locations = require('./locations.js');
 var Icons = require('./icons.js');
-console.log(Icons.navigatorIcon);
 var map = new Leaflet.map('map', {
   zoomControl: false
 });
@@ -69,6 +68,23 @@ function setDestinationMarker() {
   }
 }
 
+function compassSuccess(heading) {
+  if(sourceMarker) {
+    console.log("Compass: " + heading.magneticHeading);
+    sourceMarker.setAngle(heading.magneticHeading);
+  }
+}
+
+function compassError(error) {
+  console.log('Compass error: ' + compassError.code);
+}
+
+function watchDeviceOrientation() {
+  if(navigator.compass) {
+    var watchID = navigator.compass.watchHeading(compassSuccess, compassError, {frequency:3000});
+  }
+}
+
 function initialize() {
   searchButton.addEventListener("click", setDestinationMarker);
   searchInput.addEventListener("click", function () {
@@ -91,7 +107,7 @@ function initialize() {
   map.setMaxBounds(bounds);
 
   // Out of user range just to initialize
-  destinationMarker = Leaflet.marker([0,0])
+  destinationMarker = Leaflet.marker([90,120])
     .addTo(map)
     .bindPopup('Destino')
     .openPopup();
@@ -105,7 +121,8 @@ function initialize() {
         .bindPopup(sourcePopup)
         .openPopup();
 
-      sourceMarker.setAngle(60);
+      //sourceMarker.setAngle(60);
+      watchDeviceOrientation();
 
     } else {
       // Error
