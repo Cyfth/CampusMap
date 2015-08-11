@@ -15,5 +15,9 @@
  *along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 var App = require('./app.js');
+var Map = require('./map.js');
+var Autocomplete = require('./autocomplete.js');
 
 App.initialize();
+Map.initialize();
+Autocomplete.initialize();

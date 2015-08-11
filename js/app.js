@@ -14,42 +14,35 @@
  *You should have received a copy of the GNU Affero General Public License
  *along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- var Map = require('./map.js');
- var Autocomplete = require('./autocomplete.js');
-
- // Application Constructor
-function initialize() {
- bindEvents();
-};
- // Bind Event Listeners
- //
- // Bind any events that are required on startup. Common events are:
- // 'load', 'deviceready', 'offline', and 'online'.
- function bindEvents() {
-     document.addEventListener('deviceready', onDeviceReady, false);
- };
- // deviceready Event Handler
- //
- // The scope of 'this' is the event. In order to call the 'receivedEvent'
- // function, we must explicitly call 'app.receivedEvent(...);'
- function onDeviceReady() {
-     receivedEvent('deviceready');
-     console.log("Cordova: Device is ready!");
-     Map.initialize();
-     Autocomplete.initialize();
- };
- // Update DOM on a Received Event
- function receivedEvent(id) {
-     var parentElement = document.getElementById(id);
-     var listeningElement = parentElement.querySelector('.listening');
-     var receivedElement = parentElement.querySelector('.received');
-
-     listeningElement.setAttribute('style', 'display:none;');
-     receivedElement.setAttribute('style', 'display:block;');
-
-     console.log('Received Event: ' + id);
- };
-
 module.exports = {
-  "initialize": initialize
+    // Application Constructor
+    initialize: function() {
+        this.bindEvents();
+    },
+    // Bind Event Listeners
+    //
+    // Bind any events that are required on startup. Common events are:
+    // 'load', 'deviceready', 'offline', and 'online'.
+    bindEvents: function() {
+        document.addEventListener('deviceready', this.onDeviceReady, false);
+    },
+    // deviceready Event Handler
+    //
+    // The scope of 'this' is the event. In order to call the 'receivedEvent'
+    // function, we must explicitly call 'app.receivedEvent(...);'
+    onDeviceReady: function() {
+        receivedEvent('deviceready');
+        console.log("Cordova: Device is ready!");
+    },
+    // Update DOM on a Received Event
+    receivedEvent: function(id) {
+        var parentElement = document.getElementById(id);
+        var listeningElement = parentElement.querySelector('.listening');
+        var receivedElement = parentElement.querySelector('.received');
+
+        listeningElement.setAttribute('style', 'display:none;');
+        receivedElement.setAttribute('style', 'display:block;');
+
+        console.log('Received Event: ' + id);
+    }
 };
