@@ -1,6 +1,6 @@
 ##CampusMap
 
-#### By [Cyfth](cyfth.com)
+#### By Jackson Lucas
 -------
 
 This project in under [AGPL 3.0 License](http://www.gnu.org/licenses/agpl-3.0.html)

@@ -1,6 +1,6 @@
 /*!
  *< CampusMap - UFAM's Campus Map App with own route system >
- *Copyright (C) <2015>  <Cyfth - jackson@cyfth.com - cyfth.com>>
+ *Copyright (C) <2015>  <Jackson Lucas <jackson7br@gmail.com>>
  *
  *This program is free software: you can redistribute it and/or modify
  *it under the terms of the GNU Affero General Public License as published
