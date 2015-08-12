@@ -61,14 +61,8 @@ function setDestinationMarker() {
       destinationName = searchText;
 
       var route = [sourcePosition, destinationPosition];
-      console.log(route);
+      //console.log(route);
       createRoute();
-      // create route method call hear
-      if(routePath) {
-        routePath.setLatLngs(route);
-      } else {
-        routePath = Leaflet.polyline(route, {color: 'blue'}).addTo(map);
-      }
     }
   }
 }
@@ -80,8 +74,14 @@ function createRoute() {
   }
 
   var route = RouteSystem.getRoute(location, destinationName);
-  console.log("ROUTE");
-  console.log(route);
+  //console.log("ROUTE");
+  //console.log(route);
+
+  if(routePath) {
+    routePath.setLatLngs(route);
+  } else {
+    routePath = Leaflet.polyline(route, {color: 'blue'}).addTo(map);
+  }
 }
 
 function initialize() {
