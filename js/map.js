@@ -17,6 +17,7 @@
 var Leaflet = require('Leaflet');
 var Geolocation = require('./geolocation.js');
 var Locations = require('./locations.js');
+var RouteSystem = require('./routeSystem.js')
 
 var map = new Leaflet.map('map', {
   zoomControl: false
@@ -25,6 +26,7 @@ var map = new Leaflet.map('map', {
 var searchInput = document.getElementById('search_input');
 var searchButton = document.getElementById('search_button');
 var bounds = [[-3.0805, -59.9467], [-3.1074, -59.9873]];
+var destinationName;
 var sourceMarker, destinationMarker;
 var sourcePosition, destinationPosition;
 var isInsideUfam;
@@ -56,18 +58,35 @@ function setDestinationMarker() {
         .setPopupContent(searchText)
         .openPopup();
 
+      destinationName = searchText;
+
       var route = [sourcePosition, destinationPosition];
-      console.log(route);
-      if(routePath) {
-        routePath.setLatLngs(route);
-      } else {
-        routePath = Leaflet.polyline(route, {color: 'blue'}).addTo(map);
-      }
+      //console.log(route);
+      createRoute();
     }
   }
 }
 
+function createRoute() {
+  var location = {
+    lat: sourcePosition[0],
+    lng: sourcePosition[1]
+  }
+
+  var route = RouteSystem.getRoute(location, destinationName);
+  //console.log("ROUTE");
+  //console.log(route);
+
+  if(routePath) {
+    routePath.setLatLngs(route);
+  } else {
+    routePath = Leaflet.polyline(route, {color: 'blue'}).addTo(map);
+  }
+}
+
 function initialize() {
+  RouteSystem.initialize();
+
   searchButton.addEventListener("click", setDestinationMarker);
   searchInput.addEventListener("click", function () {
     searchInput.value = "";
