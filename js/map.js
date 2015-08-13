@@ -17,7 +17,8 @@
 var Leaflet = require('Leaflet');
 var Geolocation = require('./geolocation.js');
 var Locations = require('./locations.js');
-var RouteSystem = require('./routeSystem.js')
+var RouteSystem = require('./routeSystem.js');
+var IconManager = require('./iconManager.js');
 
 var map = new Leaflet.map('map', {
   zoomControl: false
@@ -112,12 +113,12 @@ function initialize() {
     .addTo(map)
     .bindPopup('Destino')
     .openPopup();
-
+  console.log(IconManager.userIcon);
   Geolocation.getGeolocation(function (data) {
     if(typeof data == "object") {
       sourcePosition = resolvePosition(data);
       var sourcePopup = isInsideUfam ? 'Você está aqui!' : 'Entrada da UFAM';
-      sourceMarker = Leaflet.marker(sourcePosition)
+      sourceMarker = Leaflet.marker(sourcePosition, {icon: IconManager.userIcon})
         .addTo(map)
         .bindPopup(sourcePopup)
         .openPopup();
