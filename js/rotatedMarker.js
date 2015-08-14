@@ -32,20 +32,24 @@ Leaflet.RotatedMarker = Leaflet.Marker.extend({
         angle: 0
     },
 
-    'setAngle': function setAngle (angle) {
-      this.options.angle = angle;
+    '_setPos': function (position) {
+        Leaflet.Marker.prototype._setPos.call(this, position);
 
-      if (Leaflet.DomUtil.TRANSFORM) {
-        // use the CSS transform rule if available
-        this._icon.style[Leaflet.DomUtil.TRANSFORM] += ' rotate(' + angle + 'deg)';
-      } else if(Leaflet.Browser.ie) {
-        // fallback for IE6, IE7, IE8
-        var rad = angle * (Math.PI / 180),
-            costheta = Math.cos(rad),
-            sintheta = Math.sin(rad);
-        this._icon.style.filter += ' progid:DXImageTransform.Microsoft.Matrix(sizingMethod=\'auto expand\', M11=' +
-            costheta + ', M12=' + (-sintheta) + ', M21=' + sintheta + ', M22=' + costheta + ')';
-      }
+        if (Leaflet.DomUtil.TRANSFORM) {
+            // use the CSS transform rule if available
+            this._icon.style[Leaflet.DomUtil.TRANSFORM] += ' rotate(' + this.options.angle + 'deg)';
+        } else if(Leaflet.Browser.ie) {
+            // fallback for IE6, IE7, IE8
+            var rad = this.options.angle * (Math.PI / 180),
+                costheta = Math.cos(rad),
+                sintheta = Math.sin(rad);
+            this._icon.style.filter += ' progid:DXImageTransform.Microsoft.Matrix(sizingMethod=\'auto expand\', M11=' +
+                costheta + ', M12=' + (-sintheta) + ', M21=' + sintheta + ', M22=' + costheta + ')';
+        }
+    },
+    'setAngle': function (angle) {
+        this.options.angle = angle;
+        this._setPos(this._latlng);
     }
 });
 

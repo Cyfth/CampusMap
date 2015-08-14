@@ -128,6 +128,16 @@ function initialize() {
       console.log(data);
     }
   });
+
+  testNavigation();
+}
+
+function testNavigation() {
+  var testMarker = RotatedMarker.create({lat:-3.0929649, lng:-59.9661264}, {icon: IconManager.userIcon, angle: 210})
+    .addTo(map);
+
+  console.log(testMarker);
+  testMarker.setAngle(90);
 }
 
 module.exports = {
