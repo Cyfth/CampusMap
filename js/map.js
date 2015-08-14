@@ -19,6 +19,7 @@ var Geolocation = require('./geolocation.js');
 var Locations = require('./locations.js');
 var RouteSystem = require('./routeSystem.js');
 var IconManager = require('./iconManager.js');
+var RotatedMarker = require('./rotatedMarker.js');
 
 var map = new Leaflet.map('map', {
   zoomControl: false
@@ -118,7 +119,7 @@ function initialize() {
     if(typeof data == "object") {
       sourcePosition = resolvePosition(data);
       var sourcePopup = isInsideUfam ? 'Você está aqui!' : 'Entrada da UFAM';
-      sourceMarker = Leaflet.marker(sourcePosition, {icon: IconManager.userIcon})
+      sourceMarker = RotatedMarker.create(sourcePosition, {icon: IconManager.userIcon})
         .addTo(map)
         .bindPopup(sourcePopup)
         .openPopup();
