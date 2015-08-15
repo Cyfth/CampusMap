@@ -35,10 +35,10 @@ var isInsideUfam;
 var routePath;
 
 function resolvePosition(data) {
-  if (data.latitude < bounds[0][0] && data.latitude > bounds[1][0] &&
-    data.longitude < bounds[0][1] && data.longitude > bounds[1][1]) {
+  if (data.lat < bounds[0][0] && data.lat > bounds[1][0] &&
+    data.lng < bounds[0][1] && data.lng > bounds[1][1]) {
     isInsideUfam = true;
-    return [data.latitude, data.longitude];
+    return [data.lat, data.lng];
 
   } else {
     isInsideUfam = false;
@@ -105,36 +105,45 @@ function initialize() {
     'attribution': '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map);
 
-  map.setView([-3.0929649, -59.9661264], 15);
-
   var zoomControl = Leaflet.control.zoom({position: "bottomleft"});
   map.addControl(zoomControl);
   // This limit the user from go elsewhere beyond bounds
-  map.setMaxBounds(bounds);
+  //map.setMaxBounds(bounds);
 
   // Out of user range just to initialize
   destinationMarker = Leaflet.marker([0,0])
     .addTo(map)
     .bindPopup('Destino')
     .openPopup();
-  console.log(IconManager.userIcon);
-  Geolocation.getGeolocation(function (data) {
-    if(typeof data == "object") {
-      sourcePosition = resolvePosition(data);
-      var sourcePopup = isInsideUfam ? 'Você está aqui!' : 'Entrada da UFAM';
+  //console.log(IconManager.userIcon);
+
+  Geolocation.watchGeolocation(function (data) {
+    console.log(data);
+    var position = {
+      lat: data.coords.latitude,
+      lng: data.coords.longitude
+    };
+
+    //sourcePosition = resolvePosition(position);
+    sourcePosition = position;
+    var sourcePopup = isInsideUfam ? 'Você está aqui!' : 'Entrada da UFAM';
+
+    if(sourceMarker === undefined) {
+
       sourceMarker = RotatedMarker.create(sourcePosition, {icon: IconManager.userIcon})
         .addTo(map)
         .bindPopup(sourcePopup)
         .openPopup();
     } else {
-      // Error
-      console.log(data);
+      sourceMarker.bearingTo(sourcePosition).setLatLng(sourcePosition);
     }
+
   });
 
-  testNavigation();
+  map.setView([-3.0929649, -59.9661264], 15);
+  //testNavigation();
 }
-
+/*
 function testNavigation() {
   var position1 = {lat:-3.0929649, lng:-59.9661264};
   var position2 = {lat: -3.099426831653781, lng:-59.9750368975606};
@@ -152,7 +161,7 @@ function testNavigation() {
   console.log("END ROTATE:");
   console.log(position2);
 }
-
+*/
 module.exports = {
   "initialize": initialize
 }

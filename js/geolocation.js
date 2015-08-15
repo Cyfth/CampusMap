@@ -72,6 +72,17 @@ function getGeolocation(callback) {
   }, 1000);
 }
 
+function watchGeolocation(callback) {
+  if(navigator.geolocation) {
+    navigator.geolocation.watchPosition(callback, getError, {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 10000
+    });
+  }
+}
+
 module.exports = {
-  "getGeolocation": getGeolocation
+  "getGeolocation": getGeolocation,
+  "watchGeolocation": watchGeolocation
 }
