@@ -140,15 +140,17 @@ function testNavigation() {
   var position2 = {lat: -3.099426831653781, lng:-59.9750368975606};
   var testMarker = RotatedMarker.create(position1, {icon: IconManager.userIcon, angle: 90})
     .addTo(map);
-  var testMarker2 = RotatedMarker.create(position2, {angle: 20})
-    .addTo(map);
+  //var testMarker2 = Leaflet.marker(position2).addTo(map);
 
-  console.log(testMarker);
+  //console.log(testMarker);
   //var rotate = Navigation.getBearing(position1, position2);
   console.log("ROTATE:");
   console.log(position2);
-  testMarker.bearingTo(position2);
-  //console.log(rotate);
+  //testMarker.bearingTo(position2)._setPos(position2);
+  testMarker.bearingTo(position2).setLatLng(position2);
+  //console.log(testMarker.setLatLng(position2));
+  console.log("END ROTATE:");
+  console.log(position2);
 }
 
 module.exports = {

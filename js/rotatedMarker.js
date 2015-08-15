@@ -40,6 +40,13 @@ Leaflet.RotatedMarker = Leaflet.Marker.extend({
     },
 
     '_setPos': function (position) {
+      /*
+      console.log("BEFORE POSITION");
+      console.log(this._latlng);
+      console.log("POSITION");
+      console.log(position);
+      console.log(this.options.angle);*/
+
       Leaflet.Marker.prototype._setPos.call(this, position);
 
       if (Leaflet.DomUtil.TRANSFORM) {
@@ -59,7 +66,6 @@ Leaflet.RotatedMarker = Leaflet.Marker.extend({
     'setAngle': function (angle) {
 
       this.options.angle = angle;
-      //this._setPos(this._latlng);
 
       return this;
     },
@@ -83,8 +89,8 @@ Leaflet.RotatedMarker = Leaflet.Marker.extend({
       }
 
       var newAngle = (degrees(Math.atan2(deltaLongitude, deltaLatitude)) + 360.0) % 360.0;
+      //console.log("BEARING");
       this.setAngle(newAngle);
-      this._setPos(position);
 
       return this;
     }
