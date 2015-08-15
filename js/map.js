@@ -20,7 +20,6 @@ var Locations = require('./locations.js');
 var RouteSystem = require('./routeSystem.js');
 var IconManager = require('./iconManager.js');
 var RotatedMarker = require('./rotatedMarker.js');
-var Navigation = require('./navigation.js');
 
 var map = new Leaflet.map('map', {
   zoomControl: false
@@ -141,13 +140,14 @@ function testNavigation() {
   var position2 = {lat: -3.099426831653781, lng:-59.9750368975606};
   var testMarker = RotatedMarker.create(position1, {icon: IconManager.userIcon, angle: 90})
     .addTo(map);
-  var testMarker2 = RotatedMarker.create(position2, {angle: 0})
+  var testMarker2 = RotatedMarker.create(position2, {angle: 20})
     .addTo(map);
 
   console.log(testMarker);
   //var rotate = Navigation.getBearing(position1, position2);
   console.log("ROTATE:");
-  console.log(testMarker.bearTo(position2));
+  console.log(position2);
+  testMarker.bearingTo(position2);
   //console.log(rotate);
 }
 

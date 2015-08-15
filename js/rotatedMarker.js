@@ -59,12 +59,13 @@ Leaflet.RotatedMarker = Leaflet.Marker.extend({
     'setAngle': function (angle) {
 
       this.options.angle = angle;
-      this._setPos(this._latlng);
+      //this._setPos(this._latlng);
 
       return this;
     },
     // Source: http://gis.stackexchange.com/questions/29239/calculate-bearing-between-two-decimal-gps-coordinates
-    'bearTo': function (newPosition) {
+    'bearingTo': function (position) {
+      var newPosition = Object.create(position);
       var lastPosition = Object.create(this._latlng);
       lastPosition.lat = radians(lastPosition.lat);
       lastPosition.lng = radians(lastPosition.lng);
@@ -83,6 +84,7 @@ Leaflet.RotatedMarker = Leaflet.Marker.extend({
 
       var newAngle = (degrees(Math.atan2(deltaLongitude, deltaLatitude)) + 360.0) % 360.0;
       this.setAngle(newAngle);
+      this._setPos(position);
 
       return this;
     }
