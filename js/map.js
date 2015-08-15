@@ -138,17 +138,17 @@ function initialize() {
 
 function testNavigation() {
   var position1 = {lat:-3.0929649, lng:-59.9661264};
-  var position2 = {lat: -3.09024294, lng: -59.96271005999999};
-  var testMarker = RotatedMarker.create(position1, {icon: IconManager.userIcon, angle: 210})
+  var position2 = {lat: -3.099426831653781, lng:-59.9750368975606};
+  var testMarker = RotatedMarker.create(position1, {icon: IconManager.userIcon, angle: 90})
     .addTo(map);
   var testMarker2 = RotatedMarker.create(position2, {angle: 0})
     .addTo(map);
 
   console.log(testMarker);
-  var rotate = Navigation.getBearing(position1, position2);
+  //var rotate = Navigation.getBearing(position1, position2);
   console.log("ROTATE:");
-  testMarker.setAngle(rotate);
-  console.log(rotate);
+  console.log(testMarker.bearTo(position2));
+  //console.log(rotate);
 }
 
 module.exports = {

@@ -27,29 +27,64 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 var Leaflet = require('Leaflet');
 
+function radians(degrees) {
+  return degrees * (Math.PI / 180);
+}
+function degrees(radians) {
+  return radians * (180 / Math.PI);
+}
+
 Leaflet.RotatedMarker = Leaflet.Marker.extend({
     'options': {
         angle: 0
     },
 
     '_setPos': function (position) {
-        Leaflet.Marker.prototype._setPos.call(this, position);
+      Leaflet.Marker.prototype._setPos.call(this, position);
 
-        if (Leaflet.DomUtil.TRANSFORM) {
-            // use the CSS transform rule if available
-            this._icon.style[Leaflet.DomUtil.TRANSFORM] += ' rotate(' + this.options.angle + 'deg)';
-        } else if(Leaflet.Browser.ie) {
-            // fallback for IE6, IE7, IE8
-            var rad = this.options.angle * (Math.PI / 180),
-                costheta = Math.cos(rad),
-                sintheta = Math.sin(rad);
-            this._icon.style.filter += ' progid:DXImageTransform.Microsoft.Matrix(sizingMethod=\'auto expand\', M11=' +
-                costheta + ', M12=' + (-sintheta) + ', M21=' + sintheta + ', M22=' + costheta + ')';
-        }
+      if (Leaflet.DomUtil.TRANSFORM) {
+          // use the CSS transform rule if available
+          this._icon.style[Leaflet.DomUtil.TRANSFORM] += ' rotate(' + this.options.angle + 'deg)';
+      } else if(Leaflet.Browser.ie) {
+          // fallback for IE6, IE7, IE8
+          var rad = this.options.angle * (Math.PI / 180),
+              costheta = Math.cos(rad),
+              sintheta = Math.sin(rad);
+          this._icon.style.filter += ' progid:DXImageTransform.Microsoft.Matrix(sizingMethod=\'auto expand\', M11=' +
+              costheta + ', M12=' + (-sintheta) + ', M21=' + sintheta + ', M22=' + costheta + ')';
+      }
+
+      return this;
     },
     'setAngle': function (angle) {
-        this.options.angle = angle;
-        this._setPos(this._latlng);
+
+      this.options.angle = angle;
+      this._setPos(this._latlng);
+
+      return this;
+    },
+    // Source: http://gis.stackexchange.com/questions/29239/calculate-bearing-between-two-decimal-gps-coordinates
+    'bearTo': function (newPosition) {
+      var lastPosition = Object.create(this._latlng);
+      lastPosition.lat = radians(lastPosition.lat);
+      lastPosition.lng = radians(lastPosition.lng);
+      newPosition.lat = radians(newPosition.lat);
+      newPosition.lng = radians(newPosition.lng);
+
+      var deltaLongitude = newPosition.lng - lastPosition.lng;
+
+      var deltaLatitude = Math.log(Math.tan(newPosition.lat/2.0+Math.PI/4.0)/Math.tan(lastPosition.lat/2.0+Math.PI/4.0));
+      if (Math.abs(deltaLongitude) > Math.PI){
+        if (deltaLongitude > 0.0)
+          deltaLongitude = -(2.0 * Math.PI - deltaLongitude);
+        else
+          deltaLongitude = (2.0 * Math.PI + deltaLongitude);
+      }
+
+      var newAngle = (degrees(Math.atan2(deltaLongitude, deltaLatitude)) + 360.0) % 360.0;
+      this.setAngle(newAngle);
+
+      return this;
     }
 });
 
