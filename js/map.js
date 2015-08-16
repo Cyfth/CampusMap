@@ -30,9 +30,15 @@ var searchButton = document.getElementById('search_button');
 var bounds = [[-3.0805, -59.9467], [-3.1074, -59.9873]];
 var destinationName;
 var sourceMarker, destinationMarker;
-var sourcePosition, destinationPosition;
+var destinationPosition;
 var isInsideUfam;
 var routePath;
+
+var geolocationData = {
+  lastPosition: [undefined, undefined],
+  intervalTime: 10000, // ms
+  minimumDistance: 50 // meters
+}
 
 function resolvePosition(data) {
   if (data.lat < bounds[0][0] && data.lat > bounds[1][0] &&
@@ -48,7 +54,7 @@ function resolvePosition(data) {
   }
 }
 
-function setDestinationMarker() {
+function setDestinationMarker () {
   var searchText = searchInput.value;
   if(searchText != "") {
     //console.log(searchText);
@@ -65,17 +71,17 @@ function setDestinationMarker() {
 
       console.log(destinationPosition);
 
-      var route = [sourcePosition, destinationPosition];
+      var route = [geolocationData.lastPosition, destinationPosition];
       //console.log(route);
       createRoute();
     }
   }
 }
 
-function createRoute() {
+function createRoute () {
   var location = {
-    lat: sourcePosition[0],
-    lng: sourcePosition[1]
+    lat: geolocationData.lastPosition[0],
+    lng: geolocationData.lastPosition[1]
   }
 
   var route = RouteSystem.getRoute(location, destinationName);
@@ -89,7 +95,29 @@ function createRoute() {
   }
 }
 
-function initialize() {
+function setSourceMarker (position) {
+  console.log(geolocationData.lastPosition);
+
+  geolocationData.lastPosition = resolvePosition(position);
+  //geolocationData.lastPosition = position;
+  var sourcePopup = isInsideUfam ? 'Você está aqui!' : 'Entrada da UFAM';
+
+  if(sourceMarker === undefined) {
+
+    sourceMarker = RotatedMarker.create(geolocationData.lastPosition, {icon: IconManager.userIcon})
+      .addTo(map)
+      .bindPopup(sourcePopup)
+      .openPopup();
+  } else {
+    sourceMarker.bearingTo(geolocationData.lastPosition).setLatLng(geolocationData.lastPosition);
+  }
+
+  console.log("AFTER");
+  console.log(geolocationData.lastPosition);
+
+}
+
+function initialize () {
   RouteSystem.initialize();
 
   searchButton.addEventListener("click", setDestinationMarker);
@@ -117,28 +145,7 @@ function initialize() {
     .openPopup();
   //console.log(IconManager.userIcon);
 
-  Geolocation.watchGeolocation(function (data) {
-    console.log(data);
-    var position = {
-      lat: data.coords.latitude,
-      lng: data.coords.longitude
-    };
-
-    //sourcePosition = resolvePosition(position);
-    sourcePosition = position;
-    var sourcePopup = isInsideUfam ? 'Você está aqui!' : 'Entrada da UFAM';
-
-    if(sourceMarker === undefined) {
-
-      sourceMarker = RotatedMarker.create(sourcePosition, {icon: IconManager.userIcon})
-        .addTo(map)
-        .bindPopup(sourcePopup)
-        .openPopup();
-    } else {
-      sourceMarker.bearingTo(sourcePosition).setLatLng(sourcePosition);
-    }
-
-  });
+  Geolocation.getGeolocation(geolocationData, setSourceMarker);
 
   map.setView([-3.0929649, -59.9661264], 15);
   //testNavigation();

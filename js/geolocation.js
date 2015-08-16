@@ -14,18 +14,25 @@
  *You should have received a copy of the GNU Affero General Public License
  *along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var position, error, callback, isPositionUpdated, isErrorRaised;
+var position, error, isGettingResponse;
 
-function getNewPosition(data) {
-  position = {
-    latitude: data.coords.latitude,
-    longitude: data.coords.longitude
+function checkNewPosition(data, callback) {
+  return function (newPosition) {
+    isGettingResponse = false;
+
+    position = {
+      lat: newPosition.coords.latitude,
+      lng: newPosition.coords.longitude
+    };
+
+    if(position) {
+      callback(position);
+    }
   };
-  isPositionUpdated = true;
 }
 
 function getError(error) {
-  isErrorRaised = true;
+  isGettingResponse = false;
   switch (error.code) {
     case error.PERMISSION_DENIED:
       console.error("User denied the request for Geolocation.");
@@ -46,40 +53,29 @@ function getError(error) {
   }
 }
 
-function getGeolocation(callback) {
+// When it gets the new position, I want to check if has a minimum distance btw
+// last position
+function getGeolocation(data, callback) {
+  var getNewPosition = checkNewPosition(data, callback);
+
   if(navigator.geolocation) {
+
+    isGettingResponse = true;
+
     navigator.geolocation.getCurrentPosition(getNewPosition, getError, {
       enableHighAccuracy: true,
-      timeout: 10000,
+      timeout: data.timeout || 10000,
       maximumAge: 0
     });
   }
-  isPositionUpdated = false;
-  isErrorRaised = false;
-
-  /*
-  It seems is set to loop infinitely but is based that getCurrentPosition will
-  always return something, the position or error. Maximum time = timeout.
-  */
-  var interval = setInterval(function () {
-    if(isPositionUpdated) {
-      callback(position);
-      clearInterval(interval);
-    } else if(isErrorRaised) {
-      callback(error);
-      clearInterval(interval);
-    }
-  }, 1000);
 }
 
-function watchGeolocation(callback) {
-  if(navigator.geolocation) {
-    navigator.geolocation.watchPosition(callback, getError, {
-      enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 10000
-    });
-  }
+function watchGeolocation(data, callback) {
+  var interval = setInterval(function () {
+    if(!isGettingResponse) {
+      getGeolocation(data, callback);
+    }
+  }, data.intervalTime);
 }
 
 module.exports = {
