@@ -19,6 +19,7 @@ var Geolocation = require('./geolocation.js');
 var Locations = require('./locations.js');
 var RouteSystem = require('./routeSystem.js');
 var IconManager = require('./iconManager.js');
+var RotatedMarker = require('./rotatedMarker.js');
 
 var map = new Leaflet.map('map', {
   zoomControl: false
@@ -29,31 +30,42 @@ var searchButton = document.getElementById('search_button');
 var bounds = [[-3.0805, -59.9467], [-3.1074, -59.9873]];
 var destinationName;
 var sourceMarker, destinationMarker;
-var sourcePosition, destinationPosition;
+var destinationPosition;
 var isInsideUfam;
 var routePath;
 
+var geolocationData = {
+  realLastPosition: {lat: undefined, lng: undefined},
+  lastPosition: {lat: undefined, lng: undefined},
+  intervalTime: 10000, // ms
+  minimumDistance: undefined // meters
+}
+
 function resolvePosition(data) {
-  if (data.latitude < bounds[0][0] && data.latitude > bounds[1][0] &&
-    data.longitude < bounds[0][1] && data.longitude > bounds[1][1]) {
+  if (data.lat < bounds[0][0] && data.lat > bounds[1][0] &&
+    data.lng < bounds[0][1] && data.lng > bounds[1][1]) {
     isInsideUfam = true;
-    return [data.latitude, data.longitude];
+    return data;
 
   } else {
     isInsideUfam = false;
-    return [-3.101187, -59.9825066];
+    return {
+      lat: -3.101187,
+      lng: -59.9825066
+    };
     //'Ops! A sua localização está fora dos limites da UFAM. Então colocamos
     // como ponto de partida, a entrada da UFAM.'
   }
 }
 
-function setDestinationMarker() {
+function setDestinationMarker () {
   var searchText = searchInput.value;
   if(searchText != "") {
-    //console.log(searchText);
+
     var position = Locations.getPosition(searchText);
 
     if(position.latitude != 0 && position.longitude != 0) {
+
       destinationPosition = [position.latitude, position.longitude];
       destinationMarker.setLatLng([position.latitude, position.longitude])
         .setPopupContent(searchText)
@@ -61,22 +73,20 @@ function setDestinationMarker() {
 
       destinationName = searchText;
 
-      var route = [sourcePosition, destinationPosition];
-      //console.log(route);
+      var route = [geolocationData.lastPosition, destinationPosition];
+
       createRoute();
     }
   }
 }
 
-function createRoute() {
+function createRoute () {
   var location = {
-    lat: sourcePosition[0],
-    lng: sourcePosition[1]
+    lat: geolocationData.lastPosition[0],
+    lng: geolocationData.lastPosition[1]
   }
 
   var route = RouteSystem.getRoute(location, destinationName);
-  //console.log("ROUTE");
-  //console.log(route);
 
   if(routePath) {
     routePath.setLatLngs(route);
@@ -85,7 +95,25 @@ function createRoute() {
   }
 }
 
-function initialize() {
+function setSourceMarker (position) {
+
+  geolocationData.realLastPosition = position;
+  geolocationData.lastPosition = resolvePosition(position);
+
+  var sourcePopup = isInsideUfam ? 'Você está aqui!' : 'Entrada da UFAM';
+
+  if(sourceMarker === undefined) {
+
+    sourceMarker = RotatedMarker.create(geolocationData.lastPosition, {icon: IconManager.userIcon})
+      .addTo(map)
+      .bindPopup(sourcePopup)
+      .openPopup();
+  } else {
+    sourceMarker.bearingTo(geolocationData.lastPosition).setLatLng(geolocationData.lastPosition);
+  }
+}
+
+function initialize () {
   RouteSystem.initialize();
 
   searchButton.addEventListener("click", setDestinationMarker);
@@ -97,11 +125,9 @@ function initialize() {
 
   // bounds limit the tiles to download just for the bound area.
   Leaflet.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    //'bounds': bounds,
+    'bounds': bounds,
     'attribution': '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map);
-
-  map.setView([-3.0929649, -59.9661264], 15);
 
   var zoomControl = Leaflet.control.zoom({position: "bottomleft"});
   map.addControl(zoomControl);
@@ -113,20 +139,10 @@ function initialize() {
     .addTo(map)
     .bindPopup('Destino')
     .openPopup();
-  console.log(IconManager.userIcon);
-  Geolocation.getGeolocation(function (data) {
-    if(typeof data == "object") {
-      sourcePosition = resolvePosition(data);
-      var sourcePopup = isInsideUfam ? 'Você está aqui!' : 'Entrada da UFAM';
-      sourceMarker = Leaflet.marker(sourcePosition, {icon: IconManager.userIcon})
-        .addTo(map)
-        .bindPopup(sourcePopup)
-        .openPopup();
-    } else {
-      // Error
-      console.log(data);
-    }
-  });
+
+  Geolocation.watchGeolocation(geolocationData, setSourceMarker);
+
+  map.setView([-3.0929649, -59.9661264], 15);
 }
 
 module.exports = {

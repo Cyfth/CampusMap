@@ -14,18 +14,57 @@
  *You should have received a copy of the GNU Affero General Public License
  *along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var position, error, callback, isPositionUpdated, isErrorRaised;
+var position, error, isGettingResponse;
 
-function getNewPosition(data) {
-  position = {
-    latitude: data.coords.latitude,
-    longitude: data.coords.longitude
+function radians(degrees) {
+  return degrees * (Math.PI / 180);
+}
+function degrees(radians) {
+  return radians * (180 / Math.PI);
+}
+
+// source: http://www.movable-type.co.uk/scripts/latlong.html
+// harvesine formula
+function distanceBetween2Coordinates(lastPosition, newPosition) {
+  var R = 6371000; // metres
+  var φ1 = radians(lastPosition.lat);
+  var φ2 = radians(newPosition.lat);
+  var Δφ = radians(newPosition.lat-lastPosition.lat);
+  var Δλ = radians(newPosition.lng-lastPosition.lng);
+
+  var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+          Math.cos(φ1) * Math.cos(φ2) *
+          Math.sin(Δλ/2) * Math.sin(Δλ/2);
+
+  var angularDistance = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+  var distance = R * angularDistance;
+  return distance; // meters
+}
+
+function checkNewPosition(data, callback) {
+  return function (newPosition) {
+    isGettingResponse = false;
+
+    position = {
+      lat: newPosition.coords.latitude,
+      lng: newPosition.coords.longitude
+    };
+
+    var distance = distanceBetween2Coordinates(data.realLastPosition, position);
+
+    var minimumDistance = data.minimumDistance || newPosition.coords.accuracy || 50;
+
+    if((!data.realLastPosition.lat && !data.realLastPosition.lng)
+      || (distance > minimumDistance)) {
+
+      callback(position);
+    }
   };
-  isPositionUpdated = true;
 }
 
 function getError(error) {
-  isErrorRaised = true;
+  isGettingResponse = false;
   switch (error.code) {
     case error.PERMISSION_DENIED:
       console.error("User denied the request for Geolocation.");
@@ -46,32 +85,32 @@ function getError(error) {
   }
 }
 
-function getGeolocation(callback) {
+// When it gets the new position, I want to check if has a minimum distance btw
+// last position
+function getGeolocation(data, callback) {
+  var getNewPosition = checkNewPosition(data, callback);
+
   if(navigator.geolocation) {
+
+    isGettingResponse = true;
+
     navigator.geolocation.getCurrentPosition(getNewPosition, getError, {
       enableHighAccuracy: true,
-      timeout: 10000,
+      timeout: data.timeout || 10000,
       maximumAge: 0
     });
   }
-  isPositionUpdated = false;
-  isErrorRaised = false;
+}
 
-  /*
-  It seems is set to loop infinitely but is based that getCurrentPosition will
-  always return something, the position or error. Maximum time = timeout.
-  */
+function watchGeolocation(data, callback) {
   var interval = setInterval(function () {
-    if(isPositionUpdated) {
-      callback(position);
-      clearInterval(interval);
-    } else if(isErrorRaised) {
-      callback(error);
-      clearInterval(interval);
+    if(!isGettingResponse) {
+      getGeolocation(data, callback);
     }
-  }, 1000);
+  }, data.intervalTime);
 }
 
 module.exports = {
-  "getGeolocation": getGeolocation
+  "getGeolocation": getGeolocation,
+  "watchGeolocation": watchGeolocation
 }
