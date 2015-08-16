@@ -35,20 +35,24 @@ var isInsideUfam;
 var routePath;
 
 var geolocationData = {
-  lastPosition: [undefined, undefined],
+  realLastPosition: {lat: undefined, lng: undefined},
+  lastPosition: {lat: undefined, lng: undefined},
   intervalTime: 10000, // ms
-  minimumDistance: 50 // meters
+  minimumDistance: undefined // meters
 }
 
 function resolvePosition(data) {
   if (data.lat < bounds[0][0] && data.lat > bounds[1][0] &&
     data.lng < bounds[0][1] && data.lng > bounds[1][1]) {
     isInsideUfam = true;
-    return [data.lat, data.lng];
+    return data;
 
   } else {
     isInsideUfam = false;
-    return [-3.101187, -59.9825066];
+    return {
+      lat: -3.101187,
+      lng: -59.9825066
+    };
     //'Ops! A sua localização está fora dos limites da UFAM. Então colocamos
     // como ponto de partida, a entrada da UFAM.'
   }
@@ -98,6 +102,7 @@ function createRoute () {
 function setSourceMarker (position) {
   console.log(geolocationData.lastPosition);
 
+  geolocationData.realLastPosition = position;
   geolocationData.lastPosition = resolvePosition(position);
   //geolocationData.lastPosition = position;
   var sourcePopup = isInsideUfam ? 'Você está aqui!' : 'Entrada da UFAM';
@@ -145,7 +150,7 @@ function initialize () {
     .openPopup();
   //console.log(IconManager.userIcon);
 
-  Geolocation.getGeolocation(geolocationData, setSourceMarker);
+  Geolocation.watchGeolocation(geolocationData, setSourceMarker);
 
   map.setView([-3.0929649, -59.9661264], 15);
   //testNavigation();

@@ -16,16 +16,57 @@
  */
 var position, error, isGettingResponse;
 
+function radians(degrees) {
+  return degrees * (Math.PI / 180);
+}
+function degrees(radians) {
+  return radians * (180 / Math.PI);
+}
+
+// source: http://www.movable-type.co.uk/scripts/latlong.html
+// harvesine formula
+function distanceBetween2Coordinates(lastPosition, newPosition) {
+  var R = 6371000; // metres
+  var φ1 = radians(lastPosition.lat);
+  var φ2 = radians(newPosition.lat);
+  var Δφ = radians(newPosition.lat-lastPosition.lat);
+  var Δλ = radians(newPosition.lng-lastPosition.lng);
+
+  var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+          Math.cos(φ1) * Math.cos(φ2) *
+          Math.sin(Δλ/2) * Math.sin(Δλ/2);
+
+  var angularDistance = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+  var distance = R * angularDistance;
+  return distance; // meters
+}
+
 function checkNewPosition(data, callback) {
   return function (newPosition) {
     isGettingResponse = false;
+
+    console.log("RAW DATA")
+    console.log(newPosition);
 
     position = {
       lat: newPosition.coords.latitude,
       lng: newPosition.coords.longitude
     };
 
-    if(position) {
+    console.log("LAST POS");
+    console.log(data.realLastPosition);
+    console.log("NEW POS");
+    console.log(position);
+    var distance = distanceBetween2Coordinates(data.realLastPosition, position);
+    console.log("DISTANCE");
+    console.log(distance);
+    var minimumDistance = data.minimumDistance || newPosition.coords.accuracy || 50;
+    console.log("MINIMUM: " + minimumDistance);
+    
+    if((!data.realLastPosition.lat && !data.realLastPosition.lng)
+      || (distance > minimumDistance)) {
+
       callback(position);
     }
   };
