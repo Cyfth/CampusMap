@@ -46,24 +46,15 @@ function checkNewPosition(data, callback) {
   return function (newPosition) {
     isGettingResponse = false;
 
-    console.log("RAW DATA")
-    console.log(newPosition);
-
     position = {
       lat: newPosition.coords.latitude,
       lng: newPosition.coords.longitude
     };
 
-    console.log("LAST POS");
-    console.log(data.realLastPosition);
-    console.log("NEW POS");
-    console.log(position);
     var distance = distanceBetween2Coordinates(data.realLastPosition, position);
-    console.log("DISTANCE");
-    console.log(distance);
+
     var minimumDistance = data.minimumDistance || newPosition.coords.accuracy || 50;
-    console.log("MINIMUM: " + minimumDistance);
-    
+
     if((!data.realLastPosition.lat && !data.realLastPosition.lng)
       || (distance > minimumDistance)) {
 

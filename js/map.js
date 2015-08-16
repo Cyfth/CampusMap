@@ -61,7 +61,7 @@ function resolvePosition(data) {
 function setDestinationMarker () {
   var searchText = searchInput.value;
   if(searchText != "") {
-    //console.log(searchText);
+
     var position = Locations.getPosition(searchText);
 
     if(position.latitude != 0 && position.longitude != 0) {
@@ -73,10 +73,8 @@ function setDestinationMarker () {
 
       destinationName = searchText;
 
-      console.log(destinationPosition);
-
       var route = [geolocationData.lastPosition, destinationPosition];
-      //console.log(route);
+
       createRoute();
     }
   }
@@ -89,8 +87,6 @@ function createRoute () {
   }
 
   var route = RouteSystem.getRoute(location, destinationName);
-  //console.log("ROUTE");
-  //console.log(route);
 
   if(routePath) {
     routePath.setLatLngs(route);
@@ -100,11 +96,10 @@ function createRoute () {
 }
 
 function setSourceMarker (position) {
-  console.log(geolocationData.lastPosition);
 
   geolocationData.realLastPosition = position;
   geolocationData.lastPosition = resolvePosition(position);
-  //geolocationData.lastPosition = position;
+
   var sourcePopup = isInsideUfam ? 'Você está aqui!' : 'Entrada da UFAM';
 
   if(sourceMarker === undefined) {
@@ -116,10 +111,6 @@ function setSourceMarker (position) {
   } else {
     sourceMarker.bearingTo(geolocationData.lastPosition).setLatLng(geolocationData.lastPosition);
   }
-
-  console.log("AFTER");
-  console.log(geolocationData.lastPosition);
-
 }
 
 function initialize () {
@@ -134,46 +125,26 @@ function initialize () {
 
   // bounds limit the tiles to download just for the bound area.
   Leaflet.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    //'bounds': bounds,
+    'bounds': bounds,
     'attribution': '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map);
 
   var zoomControl = Leaflet.control.zoom({position: "bottomleft"});
   map.addControl(zoomControl);
   // This limit the user from go elsewhere beyond bounds
-  //map.setMaxBounds(bounds);
+  map.setMaxBounds(bounds);
 
   // Out of user range just to initialize
   destinationMarker = Leaflet.marker([0,0])
     .addTo(map)
     .bindPopup('Destino')
     .openPopup();
-  //console.log(IconManager.userIcon);
 
   Geolocation.watchGeolocation(geolocationData, setSourceMarker);
 
   map.setView([-3.0929649, -59.9661264], 15);
-  //testNavigation();
 }
-/*
-function testNavigation() {
-  var position1 = {lat:-3.0929649, lng:-59.9661264};
-  var position2 = {lat: -3.099426831653781, lng:-59.9750368975606};
-  var testMarker = RotatedMarker.create(position1, {icon: IconManager.userIcon, angle: 90})
-    .addTo(map);
-  //var testMarker2 = Leaflet.marker(position2).addTo(map);
 
-  //console.log(testMarker);
-  //var rotate = Navigation.getBearing(position1, position2);
-  console.log("ROTATE:");
-  console.log(position2);
-  //testMarker.bearingTo(position2)._setPos(position2);
-  testMarker.bearingTo(position2).setLatLng(position2);
-  //console.log(testMarker.setLatLng(position2));
-  console.log("END ROTATE:");
-  console.log(position2);
-}
-*/
 module.exports = {
   "initialize": initialize
 }
