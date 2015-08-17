@@ -63,33 +63,38 @@ function checkNewPosition(data, callback) {
   };
 }
 
-function getError(error) {
-  isGettingResponse = false;
-  switch (error.code) {
-    case error.PERMISSION_DENIED:
-      console.error("User denied the request for Geolocation.");
-      error = 'Usuário negou pedido';
-      break;
-    case error.POSITION_UNAVAILABLE:
-      console.error("Location information is unavailable.");
-      error = 'Não foi possível encontrar a sua localização. Posição indisponível. Entrada da UFAM foi colocado como ponto de partida.';
-      break;
-    case error.TIMEOUT:
-      console.error("The request to get user location timed out.");
-      error = 'Não foi possível encontrar a sua localização. Tempo de espera esgotado. Entrada da UFAM foi colocado como ponto de partida.';
-      break;
-    case error.UNKNOWN_ERROR:
-      console.error("An unknown error occurred.");
-      error = 'Não foi possível encontrar a sua localização. Erro desconhecido. Entrada da UFAM foi colocado como ponto de partida.';
-      break;
+function onError(callback) {
+
+  return function (error) {
+    isGettingResponse = false;
+    var errorText;
+    switch (error.code) {
+      case error.PERMISSION_DENIED:
+        console.error("User denied the request for Geolocation.");
+        errorText = '';
+        break;
+      case error.POSITION_UNAVAILABLE:
+        console.error("Location information is unavailable.");
+        errorText = 'Não foi possível encontrar a sua localização. Posição indisponível. Entrada da UFAM foi colocado como ponto de partida.';
+        break;
+      case error.TIMEOUT:
+        console.error("The request to get user location timed out.");
+        errorText = 'Não foi possível encontrar a sua localização. Tempo de espera esgotado. Entrada da UFAM foi colocado como ponto de partida.';
+        break;
+      case error.UNKNOWN_ERROR:
+        console.error("An unknown error occurred.");
+        errorText = 'Não foi possível encontrar a sua localização. Entrada da UFAM foi colocado como ponto de partida.';
+        break;
+    }
+    callback(errorText);
   }
 }
 
 // When it gets the new position, I want to check if has a minimum distance btw
 // last position
-function getGeolocation(data, callback) {
-  var getNewPosition = checkNewPosition(data, callback);
-
+function getGeolocation(data, callbackSuccess, callbackError) {
+  var getNewPosition = checkNewPosition(data, callbackSuccess);
+  var getError = onError(callbackError);
   if(navigator.geolocation) {
 
     isGettingResponse = true;
@@ -102,10 +107,10 @@ function getGeolocation(data, callback) {
   }
 }
 
-function watchGeolocation(data, callback) {
+function watchGeolocation(data, callbackSuccess, callbackError) {
   var interval = setInterval(function () {
     if(!isGettingResponse) {
-      getGeolocation(data, callback);
+      getGeolocation(data, callbackSuccess, callbackError);
     }
   }, data.intervalTime);
 }

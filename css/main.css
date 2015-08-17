@@ -19,3 +19,13 @@ html, body, #map {
   padding-top: 1.250rem;
   padding-bottom: 1.250rem;
 }
+
+#notification {
+  display: none;
+  margin-bottom: 0;
+  position: absolute;
+  top: 10%;
+  width: 95%;
+  margin: 0 0 0 5%;
+  z-index: 2000;
+}

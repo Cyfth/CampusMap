@@ -20,6 +20,7 @@ var Locations = require('./locations.js');
 var RouteSystem = require('./routeSystem.js');
 var IconManager = require('./iconManager.js');
 var RotatedMarker = require('./rotatedMarker.js');
+var Notification = require('./notification.js');
 
 var map = new Leaflet.map('map', {
   zoomControl: false
@@ -33,6 +34,7 @@ var sourceMarker, destinationMarker;
 var destinationPosition;
 var isInsideUfam;
 var routePath;
+var firstTimeGeolocation = true;
 
 var geolocationData = {
   realLastPosition: {lat: undefined, lng: undefined},
@@ -100,7 +102,20 @@ function setSourceMarker (position) {
   geolocationData.realLastPosition = position;
   geolocationData.lastPosition = resolvePosition(position);
 
-  var sourcePopup = isInsideUfam ? 'Você está aqui!' : 'Entrada da UFAM';
+  var sourcePopup;
+
+  if(isInsideUfam) {
+    sourcePopup = 'Você está aqui!';
+  } else {
+    sourcePopup = 'Entrada da UFAM';
+
+    if(firstTimeGeolocation) {
+
+      Notification.showNotification('Ops! A sua localização está fora dos limites da UFAM. Então colocamos como ponto de partida, entrada da UFAM.','alert-info');
+      firstTimeGeolocation = false;
+    }
+  }
+
 
   if(sourceMarker === undefined) {
 
@@ -110,6 +125,14 @@ function setSourceMarker (position) {
       .openPopup();
   } else {
     sourceMarker.bearingTo(geolocationData.lastPosition).setLatLng(geolocationData.lastPosition);
+  }
+
+}
+
+function geolocationError(error) {
+  // show notification
+  if(error) {
+    Notification.showNotification(error, 'alert-warning');
   }
 }
 
@@ -125,7 +148,7 @@ function initialize () {
 
   // bounds limit the tiles to download just for the bound area.
   Leaflet.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    'bounds': bounds,
+    //'bounds': bounds,
     'attribution': '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map);
 
@@ -140,7 +163,9 @@ function initialize () {
     .bindPopup('Destino')
     .openPopup();
 
-  Geolocation.watchGeolocation(geolocationData, setSourceMarker);
+  Geolocation.watchGeolocation(geolocationData, setSourceMarker, geolocationError);
+
+  Notification.initialize();
 
   map.setView([-3.0929649, -59.9661264], 15);
 }
