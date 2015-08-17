@@ -14,10 +14,15 @@
  *You should have received a copy of the GNU Affero General Public License
  *along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var App = require('./app.js');
-var Map = require('./map.js');
-var Autocomplete = require('./autocomplete.js');
+var Leaflet = require('Leaflet');
+var userIcon = new Leaflet.Icon({
+  iconUrl: './css/leaflet/images/user-icon.png',
+  iconRetinaUrl: './css/leaflet/images/user-icon-2x.png',
+  iconAnchor: [13, 27],
+  popupAnchor:  [1, -24],
+  iconSize: [41, 41]
+});
 
-App.initialize();
-Map.initialize();
-Autocomplete.initialize();
+module.exports = {
+  'userIcon': userIcon
+}

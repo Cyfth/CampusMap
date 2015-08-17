@@ -14,10 +14,36 @@
  *You should have received a copy of the GNU Affero General Public License
  *along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var App = require('./app.js');
-var Map = require('./map.js');
-var Autocomplete = require('./autocomplete.js');
+var notification;
+var classNameBase = 'alert text-capitalize ';
+var type;
+var isShowing = false;
 
-App.initialize();
-Map.initialize();
-Autocomplete.initialize();
+function showNotification(text, newType) {
+  if(isShowing) {
+    notification.style.display = "none";
+  }
+
+  type = newType;
+
+  notification.style.display = "block";
+  notification.className = classNameBase + type + ' animated slideInRight';
+
+  notification.textContent = text;
+  isShowing = true;
+}
+
+function hideNotification() {
+  notification.className = classNameBase + type + ' animated slideOutRight';
+  isShowing = false;
+}
+
+function initialize() {
+  notification = document.getElementById('notification');
+  notification.addEventListener('click', hideNotification, false);
+}
+
+module.exports = {
+  'initialize': initialize,
+  'showNotification': showNotification
+}
