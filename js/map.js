@@ -21,6 +21,7 @@ var RouteSystem = require('./routeSystem.js');
 var IconManager = require('./iconManager.js');
 var RotatedMarker = require('./rotatedMarker.js');
 var Notification = require('./notification.js');
+var UserMarker = require('../leaflet-usermaker/leaflet.usermarker.js');
 
 var map = new Leaflet.map('map', {
   zoomControl: false
@@ -39,7 +40,7 @@ var firstTimeGeolocation = true;
 var geolocationData = {
   realLastPosition: {lat: undefined, lng: undefined},
   lastPosition: {lat: undefined, lng: undefined},
-  intervalTime: 10000, // ms
+  intervalTime: 4000, // ms
   minimumDistance: 25 // meters
 }
 
@@ -125,12 +126,14 @@ function setSourceMarker (position) {
 
   if(sourceMarker === undefined) {
 
-    sourceMarker = RotatedMarker.create(geolocationData.lastPosition, {icon: IconManager.userIcon})
+    sourceMarker = UserMarker.create(geolocationData.lastPosition
+    , {pulsing: true, accuracy: 65, smallIcon:true})
       .addTo(map)
       .bindPopup(sourcePopup)
       .openPopup();
+
   } else {
-    sourceMarker.bearingTo(geolocationData.lastPosition).setLatLng(geolocationData.lastPosition);
+    sourceMarker.setLatLng(geolocationData.lastPosition);
   }
 
 }
@@ -143,6 +146,7 @@ function geolocationError(error) {
 }
 
 function initialize () {
+
   RouteSystem.initialize();
 
   searchButton.addEventListener("click", setDestinationMarker);
