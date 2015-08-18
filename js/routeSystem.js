@@ -101,6 +101,8 @@ module.exports = (function() {
       actualPoint,
       actualDistance;
 
+    console.log("LOCATION");
+    console.log(location);
     for (index = __private.data.length-1; index >= 0; index--) {
       actualPoint = __private.data[index];
 
@@ -262,6 +264,8 @@ module.exports = (function() {
     if (typeof source == "string") {
       sourcePoints = __private.getPointsByStructureName(source);
     } else {
+      console.log("GET ROUTE");
+      console.log(source);
       sourcePoints = __private.getPointByLocation(source);
     }
 

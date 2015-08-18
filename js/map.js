@@ -21,6 +21,7 @@ var RouteSystem = require('./routeSystem.js');
 var IconManager = require('./iconManager.js');
 var RotatedMarker = require('./rotatedMarker.js');
 var Notification = require('./notification.js');
+var UserMarker = require('../leaflet-usermaker/leaflet.usermarker.js');
 
 var map = new Leaflet.map('map', {
   zoomControl: false
@@ -39,15 +40,20 @@ var firstTimeGeolocation = true;
 var geolocationData = {
   realLastPosition: {lat: undefined, lng: undefined},
   lastPosition: {lat: undefined, lng: undefined},
-  intervalTime: 10000, // ms
-  minimumDistance: undefined // meters
+  intervalTime: 4000, // ms
+  minimumDistance: 25 // meters
 }
 
 function resolvePosition(data) {
   if (data.lat < bounds[0][0] && data.lat > bounds[1][0] &&
     data.lng < bounds[0][1] && data.lng > bounds[1][1]) {
     isInsideUfam = true;
-    return data;
+    console.log("NEW SOURCE");
+    console.log(data);
+    return {
+      lat: data.lat,
+      lng: data.lng
+    };
 
   } else {
     isInsideUfam = false;
@@ -74,9 +80,7 @@ function setDestinationMarker () {
         .openPopup();
 
       destinationName = searchText;
-
-      var route = [geolocationData.lastPosition, destinationPosition];
-
+      console.log(destinationName);
       createRoute();
     }
   }
@@ -84,12 +88,13 @@ function setDestinationMarker () {
 
 function createRoute () {
   var location = {
-    lat: geolocationData.lastPosition[0],
-    lng: geolocationData.lastPosition[1]
+    lat: geolocationData.lastPosition.lat,
+    lng: geolocationData.lastPosition.lng
   }
 
   var route = RouteSystem.getRoute(location, destinationName);
-
+  console.log("ROTA");
+  console.log(route);
   if(routePath) {
     routePath.setLatLngs(route);
   } else {
@@ -101,6 +106,8 @@ function setSourceMarker (position) {
 
   geolocationData.realLastPosition = position;
   geolocationData.lastPosition = resolvePosition(position);
+  console.log("LAST POSITION");
+  console.log(geolocationData.lastPosition);
 
   var sourcePopup;
 
@@ -119,12 +126,14 @@ function setSourceMarker (position) {
 
   if(sourceMarker === undefined) {
 
-    sourceMarker = RotatedMarker.create(geolocationData.lastPosition, {icon: IconManager.userIcon})
+    sourceMarker = UserMarker.create(geolocationData.lastPosition
+    , {pulsing: true, accuracy: 65, smallIcon:true})
       .addTo(map)
       .bindPopup(sourcePopup)
       .openPopup();
+
   } else {
-    sourceMarker.bearingTo(geolocationData.lastPosition).setLatLng(geolocationData.lastPosition);
+    sourceMarker.setLatLng(geolocationData.lastPosition);
   }
 
 }
@@ -137,6 +146,7 @@ function geolocationError(error) {
 }
 
 function initialize () {
+
   RouteSystem.initialize();
 
   searchButton.addEventListener("click", setDestinationMarker);
