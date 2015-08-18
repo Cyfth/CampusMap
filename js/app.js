@@ -32,6 +32,7 @@ module.exports = {
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         receivedEvent('deviceready');
+        StatusBar.overlaysWebView(false);
         console.log("Cordova: Device is ready!");
     },
     // Update DOM on a Received Event
