@@ -140,7 +140,7 @@ function setSourceMarker (position) {
 
 function geolocationError(error) {
   // show notification
-  if(error) {
+  if(error && firstTimeGeolocation) {
     Notification.showNotification(error, 'alert-warning');
   }
 }
