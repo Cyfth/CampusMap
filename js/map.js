@@ -29,6 +29,7 @@ var map = new Leaflet.map('map', {
 
 var searchInput = document.getElementById('search_input');
 var searchButton = document.getElementById('search_button');
+var searchBar = document.getElementById('search_bar');
 var bounds = [[-3.0805, -59.9467], [-3.1074, -59.9873]];
 var destinationName;
 var sourceMarker, destinationMarker;
@@ -66,8 +67,13 @@ function resolvePosition(data) {
   }
 }
 
-function setDestinationMarker () {
+function setDestinationMarker (event) {
   var searchText = searchInput.value;
+
+  if(event) {
+    event.preventDefault();
+  }
+
   if(searchText != "") {
 
     var position = Locations.getPosition(searchText);
@@ -149,7 +155,12 @@ function initialize () {
 
   RouteSystem.initialize();
 
-  searchButton.addEventListener("click", setDestinationMarker);
+  searchButton.addEventListener("click", setDestinationMarker, false);
+  searchBar.addEventListener("submit", setDestinationMarker, false);
+  document.addEventListener("searchbutton", setDestinationMarker, false);
+
+
+
   searchInput.addEventListener("click", function () {
     searchInput.value = "";
   });

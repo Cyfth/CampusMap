@@ -98,6 +98,7 @@ function onError(callback) {
 function getGeolocation(data, callbackSuccess, callbackError) {
   var getNewPosition = checkNewPosition(data, callbackSuccess);
   var getError = onError(callbackError);
+  
   if(navigator.geolocation) {
 
     isGettingResponse = true;
