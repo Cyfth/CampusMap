@@ -14,6 +14,11 @@
  *You should have received a copy of the GNU Affero General Public License
  *along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+ var Map = require('./map.js');
+ var Autocomplete = require('./autocomplete.js');
+
+var isReady = false;
+
 module.exports = {
     // Application Constructor
     initialize: function() {
@@ -32,6 +37,11 @@ module.exports = {
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         receivedEvent('deviceready');
+        StatusBar.overlaysWebView(false);
+        isReady = true;
+        Map.initialize();
+        Autocomplete.initialize();
+        document.addEventListener("searchbutton", Map.setDestinationMarker, false);
         console.log("Cordova: Device is ready!");
     },
     // Update DOM on a Received Event

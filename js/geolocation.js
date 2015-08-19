@@ -75,15 +75,18 @@ function onError(callback) {
         break;
       case error.POSITION_UNAVAILABLE:
         console.error("Location information is unavailable.");
-        errorText = 'Não foi possível encontrar a sua localização. Posição indisponível. Entrada da UFAM foi colocado como ponto de partida.';
+        //errorText = 'Não foi possível encontrar a sua localização. Posição indisponível. Entrada da UFAM foi colocado como ponto de partida.';
+        errorText = 'Não foi possível encontrar a sua localização.';
         break;
       case error.TIMEOUT:
         console.error("The request to get user location timed out.");
-        errorText = 'Não foi possível encontrar a sua localização. Tempo de espera esgotado. Entrada da UFAM foi colocado como ponto de partida.';
+        //errorText = 'Não foi possível encontrar a sua localização. Tempo de espera esgotado. Entrada da UFAM foi colocado como ponto de partida.';
+        errorText = 'Não foi possível encontrar a sua localização.';
         break;
       case error.UNKNOWN_ERROR:
         console.error("An unknown error occurred.");
-        errorText = 'Não foi possível encontrar a sua localização. Entrada da UFAM foi colocado como ponto de partida.';
+        //errorText = 'Não foi possível encontrar a sua localização. Entrada da UFAM foi colocado como ponto de partida.';
+        errorText = 'Não foi possível encontrar a sua localização.';
         break;
     }
     callback(errorText);
@@ -95,6 +98,7 @@ function onError(callback) {
 function getGeolocation(data, callbackSuccess, callbackError) {
   var getNewPosition = checkNewPosition(data, callbackSuccess);
   var getError = onError(callbackError);
+  
   if(navigator.geolocation) {
 
     isGettingResponse = true;
