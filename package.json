@@ -1,6 +1,6 @@
 {
   "name": "CampusMap",
-  "version": "0.1.0",
+  "version": "1.1.0",
   "description": "UFAM's Campus Map",
   "main": "js/index.js",
   "scripts": {
@@ -19,7 +19,7 @@
   ],
   "author": {
     "name": "Jackson Lucas",
-    "email": "jackson@cyfth.com"
+    "email": "jackson7br@gmail.com"
   },
   "license": "AGPL 3.0",
   "bugs": {
