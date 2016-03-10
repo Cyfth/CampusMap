@@ -14,10 +14,6 @@
  *You should have received a copy of the GNU Affero General Public License
  *along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var App = require('./app.js');
-var Map = require('./map.js');
-var Autocomplete = require('./autocomplete.js');
+var router = require('./route.js');
 
-App.initialize();
-Map.initialize();
-Autocomplete.initialize();
+router.initialize();

@@ -16,7 +16,7 @@
  */
 var Map = require('./map.js');
 var Autocomplete = require('./autocomplete.js');
-
+var Route = require('./route.js');
 var isReady = false;
 
 module.exports = {

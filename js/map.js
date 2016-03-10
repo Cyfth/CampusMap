@@ -39,6 +39,7 @@ var destinationPosition;
 var isInsideUfam;
 var routePath;
 var firstTimeGeolocation = true;
+var createRoutePending = false;
 
 var geolocationData = {
   realLastPosition: {lat: undefined, lng: undefined},
@@ -89,7 +90,13 @@ function setDestinationMarker (event) {
 
       destinationName = searchText;
       console.log(destinationName);
-      createRoute();
+
+      if(geolocationData.lastPosition.lat && geolocationData.lastPosition.lat) {
+        console.log('calling route');
+        createRoute();
+      } else {
+        createRoutePending = true;
+      }
     }
   }
 }
@@ -144,6 +151,10 @@ function setSourceMarker (position) {
     sourceMarker.setLatLng(geolocationData.lastPosition);
   }
 
+  if(createRoutePending) {
+    createRoute();
+  }
+
 }
 
 function geolocationError(error) {
@@ -188,13 +199,19 @@ function initialize () {
     .bindPopup('Destino')
     .openPopup();
 
-  Geolocation.watchGeolocation(geolocationData, setSourceMarker, geolocationError);
+  Geolocation.getGeolocation(geolocationData, setSourceMarker, geolocationError);
 
   Notification.initialize();
 
   map.setView([-3.0929649, -59.9661264], 15);
 }
 
+function setDestinationByLink(structure) {
+    searchInput.value = structure.replace(/\+/g, ' ');;
+    setDestinationMarker();
+}
+
 module.exports = {
-  "initialize": initialize
+  "initialize": initialize,
+  "setDestinationByLink": setDestinationByLink
 }
