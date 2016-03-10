@@ -21,6 +21,7 @@ var searchInput = document.getElementById('search_input');
 var locationsAutoComplete, locationsName;
 
 function initialize() {
+
   locationsName = Locations.getLocationsName();
 
   locationsAutoComplete = new Autocomplete({
