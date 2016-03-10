@@ -23,7 +23,7 @@ var IconManager = require('./iconManager.js');
 var RotatedMarker = require('./rotatedMarker.js');
 var Notification = require('./notification.js');
 var UserMarker = require('../leaflet-usermaker/leaflet.usermarker.js');
-
+var Page = require('page');
 var map = new Leaflet.map('map', {
   zoomControl: false
 
@@ -165,13 +165,23 @@ function geolocationError(error) {
   }
 }
 
+function redirect () {
+  if(searchInput.value != "") {
+    var path = '#!/estrutura/' + searchInput.value.replace(/ /g, '+');
+    console.log(path);
+    map.removeLayer(destinationMarker);
+    Page(path);
+    setDestinationMarker();
+  }
+}
+
 function initialize () {
 
   RouteSystem.initialize();
 
-  searchButton.addEventListener("click", setDestinationMarker, false);
-  searchBar.addEventListener("submit", setDestinationMarker, false);
-  document.addEventListener("searchbutton", setDestinationMarker, false);
+  searchButton.addEventListener("click", redirect, false);
+  searchBar.addEventListener("submit", redirect, false);
+  document.addEventListener("searchbutton", redirect, false);
 
 
 
