@@ -1,6 +1,6 @@
 {
   "name": "CampusMap",
-  "version": "0.1.0",
+  "version": "1.2.0",
   "description": "UFAM's Campus Map",
   "main": "js/index.js",
   "scripts": {
@@ -19,7 +19,7 @@
   ],
   "author": {
     "name": "Jackson Lucas",
-    "email": "jackson@cyfth.com"
+    "email": "jackson7br@gmail.com"
   },
   "license": "AGPL 3.0",
   "bugs": {
@@ -27,7 +27,8 @@
   },
   "homepage": "https://github.com/jackson7am/CampusMap",
   "dependencies": {
-    "leaflet": "~0.7.3"
+    "leaflet": "^0.7.7",
+    "pouchdb": "^5.3.0"
   },
   "devDependencies": {
     "browserify": "^11.0.0"

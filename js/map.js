@@ -15,6 +15,7 @@
  *along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 var Leaflet = require('Leaflet');
+var TileLayer = require('./L.TileLayer.PouchDB.js');
 var Geolocation = require('./geolocation.js');
 var Locations = require('./locations.js');
 var RouteSystem = require('./routeSystem.js');
@@ -25,6 +26,7 @@ var UserMarker = require('../leaflet-usermaker/leaflet.usermarker.js');
 
 var map = new Leaflet.map('map', {
   zoomControl: false
+
 });
 
 var searchInput = document.getElementById('search_input');
@@ -46,7 +48,7 @@ var geolocationData = {
 }
 
 function resolvePosition(data) {
-  if (data.lat < bounds[0][0] && data.lat > bounds[1][0] &&
+if (data.lat < bounds[0][0] && data.lat > bounds[1][0] &&
     data.lng < bounds[0][1] && data.lng > bounds[1][1]) {
     isInsideUfam = true;
     console.log("NEW SOURCE");
@@ -147,6 +149,7 @@ function setSourceMarker (position) {
 function geolocationError(error) {
   // show notification
   if(error && firstTimeGeolocation) {
+    firstTimeGeolocation = false;
     Notification.showNotification(error, 'alert-warning');
   }
 }
@@ -170,7 +173,8 @@ function initialize () {
   // bounds limit the tiles to download just for the bound area.
   Leaflet.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     //'bounds': bounds,
-    'attribution': '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    'attribution': '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+    useCache: true
   }).addTo(map);
 
   var zoomControl = Leaflet.control.zoom({position: "bottomleft"});
