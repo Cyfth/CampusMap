@@ -40,6 +40,7 @@ var isInsideUfam;
 var routePath;
 var firstTimeGeolocation = true;
 var createRoutePending = false;
+var zoomControl;
 
 var geolocationData = {
   realLastPosition: {lat: undefined, lng: undefined},
@@ -169,6 +170,7 @@ function redirect () {
   if(searchInput.value != "") {
     var path = '#!/estrutura/' + searchInput.value.replace(/ /g, '+');
     console.log(path);
+    map.removeControl(zoomControl);
     map.removeLayer(destinationMarker);
     Page(path);
     setDestinationMarker();
@@ -198,7 +200,7 @@ function initialize () {
     useCache: true
   }).addTo(map);
 
-  var zoomControl = Leaflet.control.zoom({position: "bottomleft"});
+  zoomControl = Leaflet.control.zoom({position: "bottomleft"});
   map.addControl(zoomControl);
   // This limit the user from go elsewhere beyond bounds
   map.setMaxBounds(bounds);
