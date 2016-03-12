@@ -16,7 +16,7 @@ CACHE MANIFEST
 ./css/bootstrap.min.css
 ./css/index.css
 ./css/main.css
-./data/lufam.json?v1
+./data/ufam.json?v1
 ./data/privatesm.json?v1
 ./leaflet-usermaker/img/bluedot.png
 ./leaflet-usermaker/leaflet.usermarker.css
