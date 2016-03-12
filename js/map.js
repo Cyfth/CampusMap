@@ -23,7 +23,7 @@ var IconManager = require('./iconManager.js');
 var RotatedMarker = require('./rotatedMarker.js');
 var Notification = require('./notification.js');
 var UserMarker = require('../leaflet-usermaker/leaflet.usermarker.js');
-
+var Page = require('page');
 var map = new Leaflet.map('map', {
   zoomControl: false
 
@@ -39,6 +39,8 @@ var destinationPosition;
 var isInsideUfam;
 var routePath;
 var firstTimeGeolocation = true;
+var createRoutePending = false;
+var zoomControl;
 
 var geolocationData = {
   realLastPosition: {lat: undefined, lng: undefined},
@@ -89,7 +91,13 @@ function setDestinationMarker (event) {
 
       destinationName = searchText;
       console.log(destinationName);
-      createRoute();
+
+      if(geolocationData.lastPosition.lat && geolocationData.lastPosition.lat) {
+        console.log('calling route');
+        createRoute();
+      } else {
+        createRoutePending = true;
+      }
     }
   }
 }
@@ -144,6 +152,10 @@ function setSourceMarker (position) {
     sourceMarker.setLatLng(geolocationData.lastPosition);
   }
 
+  if(createRoutePending) {
+    createRoute();
+  }
+
 }
 
 function geolocationError(error) {
@@ -154,13 +166,24 @@ function geolocationError(error) {
   }
 }
 
+function redirect () {
+  if(searchInput.value != "") {
+    var path = '#!/estrutura/' + searchInput.value.replace(/ /g, '+');
+    console.log(path);
+    map.removeControl(zoomControl);
+    map.removeLayer(destinationMarker);
+    Page(path);
+    setDestinationMarker();
+  }
+}
+
 function initialize () {
 
   RouteSystem.initialize();
 
-  searchButton.addEventListener("click", setDestinationMarker, false);
-  searchBar.addEventListener("submit", setDestinationMarker, false);
-  document.addEventListener("searchbutton", setDestinationMarker, false);
+  searchButton.addEventListener("click", redirect, false);
+  searchBar.addEventListener("submit", redirect, false);
+  document.addEventListener("searchbutton", redirect, false);
 
 
 
@@ -177,7 +200,7 @@ function initialize () {
     useCache: true
   }).addTo(map);
 
-  var zoomControl = Leaflet.control.zoom({position: "bottomleft"});
+  zoomControl = Leaflet.control.zoom({position: "bottomleft"});
   map.addControl(zoomControl);
   // This limit the user from go elsewhere beyond bounds
   map.setMaxBounds(bounds);
@@ -188,13 +211,19 @@ function initialize () {
     .bindPopup('Destino')
     .openPopup();
 
-  Geolocation.watchGeolocation(geolocationData, setSourceMarker, geolocationError);
+  Geolocation.getGeolocation(geolocationData, setSourceMarker, geolocationError);
 
   Notification.initialize();
 
   map.setView([-3.0929649, -59.9661264], 15);
 }
 
+function setDestinationByLink(structure) {
+    searchInput.value = structure.replace(/\+/g, ' ');;
+    setDestinationMarker();
+}
+
 module.exports = {
-  "initialize": initialize
+  "initialize": initialize,
+  "setDestinationByLink": setDestinationByLink
 }
