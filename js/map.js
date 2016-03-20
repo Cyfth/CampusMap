@@ -168,11 +168,18 @@ function geolocationError(error) {
 
 function redirect () {
   if(searchInput.value != "") {
-    var path = '#!/estrutura/' + searchInput.value.replace(/ /g, '+');
+    var structure = searchInput.value.replace(/ /g, '+');
+    var path = '#!/estrutura/' + structure;
     console.log(path);
-    map.removeControl(zoomControl);
-    map.removeLayer(destinationMarker);
-    Page(path);
+    console.log('updated')
+    // map.removeControl(zoomControl);
+    // map.removeLayer(destinationMarker);
+    var state = { 'page_id': 1, 'path': path };
+    var title = 'CampusMap - ' + searchInput.value;
+    var url = path;
+
+    history.pushState(state, title, url);
+    // Page(path);
     setDestinationMarker();
   }
 }

@@ -2,9 +2,10 @@
   "name": "CampusMap",
   "version": "1.2.0",
   "description": "UFAM's Campus Map",
-  "main": "js/index.js",
+  "main": "index.js",
   "scripts": {
-    "build": "browserify js/index.js --debug > bundle.js | echo | echo \"Build Completed\""
+    "build": "browserify js/index.js --debug > bundle.js | echo | echo \"Build Completed\"",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
