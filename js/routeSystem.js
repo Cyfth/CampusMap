@@ -32,7 +32,7 @@ module.exports = (function() {
   /**
    * Private Variables
    */
-  __private.data = data;
+  __private.data = data.geometries;
   __private.visitedPoints = [];
 
   // -----------------------------------
@@ -47,7 +47,7 @@ module.exports = (function() {
    * Private Methods
    */
   __private.getData = function () {
-    __private.data = data.map(__private.valueToInfinity);
+    __private.data = __private.data.map(__private.valueToInfinity);
   };
 
   __private.valueToInfinity = function (point) {
@@ -96,6 +96,7 @@ module.exports = (function() {
    * It'll look for the exact or nearest point in data
    */
   __private.getPointByLocation = function (location) {
+    location.coordinates = [location.lng, location.lat];
     var index,
       nearestPoint = [undefined, Infinity], // point_index, value
       actualPoint,
@@ -105,8 +106,8 @@ module.exports = (function() {
     console.log(location);
     for (index = __private.data.length-1; index >= 0; index--) {
       actualPoint = __private.data[index];
-
-      if (actualPoint.lng == location.lng && actualPoint.lat == location.lat) {
+      // console.log(actualPoint);
+      if (actualPoint.coordinates && actualPoint.coordinates[0] == location.coordinates[0] && actualPoint.coordinates[1] == location.coordinates[1]) {
 
         return [index];
 
@@ -125,9 +126,9 @@ module.exports = (function() {
   };
 
   __private.getDistanceBetweenLocations = function (location, location2) {
-    var distance_between_2points = Math.pow((location2.lng
-        - location.lng), 2)
-      + Math.pow((location2.lat - location.lat), 2);
+    var distance_between_2points = Math.pow((location2.coordinates[0]
+        - location.coordinates[0]), 2)
+      + Math.pow((location2.coordinates[1] - location.coordinates[1]), 2);
 
     distance_between_2points = distance_between_2points < 0 ?
       distance_between_2points * (-1) : distance_between_2points;
@@ -138,9 +139,9 @@ module.exports = (function() {
   };
 
   __private.getDistanceBetween2Points = function (point_index, point_index2) {
-    var distance_between_2points = Math.pow((__private.data[point_index2].lng
-        - __private.data[point_index].lng), 2)
-      + Math.pow((__private.data[point_index2].lat - __private.data[point_index].lat), 2);
+    var distance_between_2points = Math.pow((__private.data[point_index2].coordinates[0]
+        - __private.data[point_index].coordinates[0]), 2)
+      + Math.pow((__private.data[point_index2].coordinates[1] - __private.data[point_index].coordinates[1]), 2);
 
     distance_between_2points = distance_between_2points < 0 ?
       distance_between_2points * (-1) : distance_between_2points;
@@ -289,7 +290,7 @@ module.exports = (function() {
 
       point_index = result[0][index];
 
-      routeCoordinates.push({ lat: __private.data[point_index].lat, lng: __private.data[point_index].lng});
+      routeCoordinates.push({ lat: __private.data[point_index].coordinates[1], lng: __private.data[point_index].coordinates[0]});
     }
 
     return routeCoordinates;

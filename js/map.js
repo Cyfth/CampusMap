@@ -161,9 +161,16 @@ function setSourceMarker (position) {
 
 function geolocationError(error) {
   // show notification
-  if(error && firstTimeGeolocation) {
-    firstTimeGeolocation = false;
-    Notification.showNotification(error, 'alert-warning');
+  if(error) {
+    // Entrada da UFAM
+    setSourceMarker({
+      lat: -3.101187,
+      lng: -59.9825066
+    });
+    if(firstTimeGeolocation) {
+      firstTimeGeolocation = false;
+      Notification.showNotification(error, 'alert-warning');
+    }
   }
 }
 
@@ -207,11 +214,6 @@ function initialize () {
     accessToken: 'pk.eyJ1IjoiamFja3NvbjdhbSIsImEiOiJjaW10aHNyNDAwMXp5dXdtNGdjcXFqYm5rIn0.EWpAPF0UxZRcwU6yyEkFEw',
     useCache: true
   }).addTo(map);
-  // Leaflet.tileLayer('http://{s}.tiles.mapbox.com/v3/jackson7am.pkpiakpa/{z}/{x}/{y}.png', {
-  //   //'bounds': bounds,
-  //   'attribution': '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-  //   useCache: true
-  // }).addTo(map);
 
   zoomControl = Leaflet.control.zoom({position: "bottomleft"});
   map.addControl(zoomControl);
