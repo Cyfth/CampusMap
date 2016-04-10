@@ -7,7 +7,7 @@ L.TileLayer.addInitHook(function() {
 		this._canvas = null;
 		return;
 	}
-
+	console.log('using cache');
 	this._db = new PouchDB('offline-tiles');
 	this._canvas = document.createElement('canvas');
 

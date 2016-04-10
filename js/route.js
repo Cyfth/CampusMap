@@ -1,10 +1,10 @@
 var page = require('page');
-var App = require('./app.js');
+// var App = require('./app.js');
 var Map = require('./map.js');
 var Autocomplete = require('./autocomplete.js');
 
 function main(context, next) {
-    App.initialize();
+    // App.initialize();
     Map.initialize();
     Autocomplete.initialize();
     next();

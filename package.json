@@ -4,8 +4,7 @@
   "description": "UFAM's Campus Map",
   "main": "index.js",
   "scripts": {
-    "build": "browserify js/index.js --debug > bundle.js | echo | echo \"Build Completed\"",
-    "start": "node index.js"
+    "build": "browserify js/index.js --debug > bundle.js | echo | echo \"Build Completed\""
   },
   "repository": {
     "type": "git",
@@ -27,7 +26,10 @@
   },
   "homepage": "https://github.com/jackson7am/CampusMap",
   "dependencies": {
+    "cartodb.js": "^3.15.1",
     "leaflet": "^0.7.7",
+    "mapbox.js": "^2.4.0",
+    "page": "^1.7.1",
     "pouchdb": "^5.3.0"
   },
   "devDependencies": {

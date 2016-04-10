@@ -15,6 +15,7 @@
  *along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 var Leaflet = require('Leaflet');
+var Provider = require('./leaflet-providers.js');
 var TileLayer = require('./L.TileLayer.PouchDB.js');
 var Geolocation = require('./geolocation.js');
 var Locations = require('./locations.js');
@@ -201,11 +202,16 @@ function initialize () {
   Leaflet.Icon.Default.imagePath = './css/leaflet/images';
 
   // bounds limit the tiles to download just for the bound area.
-  Leaflet.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    //'bounds': bounds,
-    'attribution': '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+  Leaflet.tileLayer.provider('MapBox', {
+    id: 'jackson7am.pkpiakpa',
+    accessToken: 'pk.eyJ1IjoiamFja3NvbjdhbSIsImEiOiJjaW10aHNyNDAwMXp5dXdtNGdjcXFqYm5rIn0.EWpAPF0UxZRcwU6yyEkFEw',
     useCache: true
   }).addTo(map);
+  // Leaflet.tileLayer('http://{s}.tiles.mapbox.com/v3/jackson7am.pkpiakpa/{z}/{x}/{y}.png', {
+  //   //'bounds': bounds,
+  //   'attribution': '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+  //   useCache: true
+  // }).addTo(map);
 
   zoomControl = Leaflet.control.zoom({position: "bottomleft"});
   map.addControl(zoomControl);

@@ -14,6 +14,11 @@
  *You should have received a copy of the GNU Affero General Public License
  *along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var router = require('./route.js');
+var App = require('./app.js');
+var route = require('./route.js');
 
-router.initialize();
+
+App.initialize();
+// Map.initialize();
+// Autocomplete.initialize();
+route.initialize();
