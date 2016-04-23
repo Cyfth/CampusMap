@@ -15,6 +15,7 @@
  *along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 var Leaflet = require('Leaflet');
+var Icons = require('./leaflet-sprite.js');
 var Provider = require('./leaflet-providers.js');
 var TileLayer = require('./L.TileLayer.PouchDB.js');
 var Geolocation = require('./geolocation.js');
@@ -193,7 +194,10 @@ function redirect () {
 }
 
 function initialize () {
-
+  console.log("path:"+Leaflet.Icon.Default.imagePath);
+  Leaflet.Icon.Default.imagePath = 'images';
+  console.log("path:"+Leaflet.Icon.Default.imagePath);
+  // Leaflet.Icon.Default.imagePath = './css/leaflet/images';
   RouteSystem.initialize();
 
   searchButton.addEventListener("click", redirect, false);
@@ -215,13 +219,17 @@ function initialize () {
     useCache: true
   }).addTo(map);
 
-  zoomControl = Leaflet.control.zoom({position: "bottomleft"});
-  map.addControl(zoomControl);
+  if(!zoomControl) {
+    zoomControl = Leaflet.control.zoom({position: "bottomleft"});
+
+    map.addControl(zoomControl);
+  }
+
   // This limit the user from go elsewhere beyond bounds
   map.setMaxBounds(bounds);
 
   // Out of user range just to initialize
-  destinationMarker = Leaflet.marker([0,0])
+  destinationMarker = Leaflet.marker([0,0], {icon: Leaflet.spriteIcon("blue")})
     .addTo(map)
     .bindPopup('Destino')
     .openPopup();

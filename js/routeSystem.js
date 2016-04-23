@@ -166,9 +166,9 @@ module.exports = (function() {
       result = [],
       points = __private.data.slice();
 
-    console.log(points);
-    console.log(source);
-    console.log(destination_id);
+    // console.log(points);
+    // console.log(source);
+    // console.log(destination_id);
     do {
       for (index2 = actualPoints.length-1; index2 >= 0; index2--) {
 

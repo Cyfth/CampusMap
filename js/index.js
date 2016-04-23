@@ -17,7 +17,7 @@
 var App = require('./app.js');
 var route = require('./route.js');
 
-
+// console.log("Initializing index");
 App.initialize();
 // Map.initialize();
 // Autocomplete.initialize();

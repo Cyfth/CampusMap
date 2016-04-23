@@ -15,14 +15,17 @@
  *along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 var Leaflet = require('Leaflet');
-var userIcon = new Leaflet.Icon({
-  iconUrl: './css/leaflet/images/user-icon.png',
-  iconRetinaUrl: './css/leaflet/images/user-icon-2x.png',
-  iconAnchor: [13, 27],
-  popupAnchor:  [1, -24],
-  iconSize: [41, 41]
+var destinationIcon = new Leaflet.Icon({
+  iconUrl: 'css/leaflet/images/marker-icon.png',
+    iconRetinaUrl: 'css/leaflet/images/marker-icon-2x.png',
+    iconSize: [38, 95],
+    iconAnchor: [22, 94],
+    popupAnchor: [-3, -76],
+    shadowUrl: 'css/leaflet/images/marker-shadow.png',
+    shadowSize: [68, 95],
+    shadowAnchor: [22, 94]
 });
 
 module.exports = {
-  'userIcon': userIcon
+  'destinationIcon': destinationIcon
 }

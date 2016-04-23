@@ -4,6 +4,7 @@ var Map = require('./map.js');
 var Autocomplete = require('./autocomplete.js');
 
 function main(context, next) {
+    // console.log("Initializing route");
     // App.initialize();
     Map.initialize();
     Autocomplete.initialize();
@@ -21,6 +22,7 @@ function initialize() {
 
     page('/', main);
     page('/estrutura/:structure', main, setDestination);
+    page('*', main);
     page();
 }
 

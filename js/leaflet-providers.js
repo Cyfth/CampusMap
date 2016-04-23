@@ -246,8 +246,8 @@
 			url: '//api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}',
 			options: {
 				attribution:
-					'Imagery from <a href="http://mapbox.com/about/maps/">MapBox</a> &mdash; ' +
-					'Map data {attribution.OpenStreetMap}',
+					'Imagery <a href="http://mapbox.com/about/maps/">MapBox</a> &mdash; ' +
+					'Data {attribution.OpenStreetMap}',
 				subdomains: 'abcd'
 			}
 		},

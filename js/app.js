@@ -23,6 +23,7 @@ var isReady = false;
 module.exports = {
     // Application Constructor
     initialize: function() {
+        // console.log("Initializing app");
         this.bindEvents();
     },
     // Bind Event Listeners
@@ -30,6 +31,8 @@ module.exports = {
     // Bind any events that are required on startup. Common events are:
     // 'load', 'deviceready', 'offline', and 'online'.
     bindEvents: function() {
+        // console.log('adding event device ready');
+        // console.log(this.onDeviceReady);
         document.addEventListener('deviceready', this.onDeviceReady, false);
     },
     // deviceready Event Handler
@@ -45,16 +48,16 @@ module.exports = {
         route.initialize();
         document.addEventListener("searchbutton", Map.setDestinationMarker, false);
         console.log("Cordova: Device is ready!");
-    },
-    // Update DOM on a Received Event
-    receivedEvent: function(id) {
-        var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
-
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
-
-        console.log('Received Event: ' + id);
     }
+    // Update DOM on a Received Event
+    // receivedEvent: function(id) {
+    //     var parentElement = document.getElementById(id);
+    //     var listeningElement = parentElement.querySelector('.listening');
+    //     var receivedElement = parentElement.querySelector('.received');
+    //
+    //     listeningElement.setAttribute('style', 'display:none;');
+    //     receivedElement.setAttribute('style', 'display:block;');
+    //
+    //     console.log('Received Event: ' + id);
+    // }
 };
