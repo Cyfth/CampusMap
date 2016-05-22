@@ -43,6 +43,7 @@ var routePath;
 var firstTimeGeolocation = true;
 var createRoutePending = false;
 var zoomControl;
+var refreshGeolocationButton;
 
 var geolocationData = {
   realLastPosition: {lat: undefined, lng: undefined},
@@ -227,6 +228,43 @@ function initialize () {
 
   // This limit the user from go elsewhere beyond bounds
   map.setMaxBounds(bounds);
+
+  // Add refresh position button
+  if(!refreshGeolocationButton) {
+    refreshGeolocationButton = Leaflet.Control.extend({
+
+      options: {
+        position: 'bottomright'
+        //control position - allowed: 'topleft', 'topright', 'bottomleft', 'bottomright'
+      },
+
+      onAdd: function (map) {
+        var container = Leaflet.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom refresh-geolocation-button');
+
+        container.style.backgroundColor= "white";
+        container.style.width = '4.5rem';
+        container.style.height = '4.5rem';
+
+        container.onclick = function(){
+          Geolocation.getGeolocation(geolocationData, setSourceMarker, geolocationError);
+          Notification.showNotification('Sua posição já será atualizada', 'alert-info');
+        }
+
+        container.setAttribute("id", "refreshButton");
+        return container;
+      },
+
+    });
+    map.addControl(new refreshGeolocationButton());
+
+    var refreshImage = document.createElement('img');
+    refreshImage.setAttribute('id', 'refreshImage');
+    refreshImage.src = '/img/refreshLocation.png';
+
+    var refreshButton = document.getElementById('refreshButton');
+    refreshButton;
+    refreshButton.appendChild(refreshImage);
+  }
 
   // Out of user range just to initialize
   destinationMarker = Leaflet.marker([0,0], {icon: Leaflet.spriteIcon("blue")})
